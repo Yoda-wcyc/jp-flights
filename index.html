@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200">
+<title>日本便宜機票追蹤</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --text:#1b2330; --muted:#5a6575; --line:#e2e6eb;
+  --th:#f0f2f5; --hover:#f7f9fb; --link:#1d5fd1; --bar:rgba(245,246,248,.94);
+  --btn:#eef2f8; --btn-text:#1d4fae; --btn-line:#d3dcea;
+  --up:#c62828; --up-bg:#fde7e7; --down:#18803c; --down-bg:#e2f4e7;
+  --info:#2b5797; --info-bg:#e7eef9; --first:#6b5a12; --first-bg:#f7f0d4;
+  --c1:#2563eb; --c2:#d97706; --c3:#7c3aed; --c4:#0e9aa7;
+  --shadow:0 1px 2px rgba(20,30,45,.06),0 2px 8px rgba(20,30,45,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#111519; --card:#1a2028; --text:#e7ebf0; --muted:#9ba6b5; --line:#2c3440;
+    --th:#212833; --hover:#202731; --link:#82b2ff; --bar:rgba(17,21,25,.94);
+    --btn:#223047; --btn-text:#a9c8ff; --btn-line:#34445e;
+    --up:#ff7a7a; --up-bg:#3b1d20; --down:#5ad98a; --down-bg:#15301f;
+    --info:#9cc0ff; --info-bg:#1d2a40; --first:#e8d27a; --first-bg:#353016;
+    --c1:#60a5fa; --c2:#fbbf24; --c3:#c4a1ff; --c4:#2dd4bf;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);min-width:1200px;
+  font-family:system-ui,-apple-system,"Segoe UI","Microsoft JhengHei","微軟正黑體","PingFang TC","Noto Sans TC",sans-serif;
+  font-size:15px;line-height:1.6}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{width:1120px;margin:0 auto}
+.main{padding:28px 0 64px}
+/* 篩選列(sticky) */
+.fbar{position:sticky;top:0;z-index:20;background:var(--bar);border-bottom:1px solid var(--line);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.fbar .wrap{display:flex;align-items:center;gap:18px;padding:10px 0;font-size:14px;white-space:nowrap}
+.fgroup{display:flex;align-items:center;gap:9px;flex:none}
+.fgroup .lbl{color:var(--muted);font-size:13px;white-space:nowrap}
+.fgroup label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+.fgroup input[type=checkbox]{margin:0;width:15px;height:15px;accent-color:var(--c1)}
+.fgroup input[type=range]{width:130px;accent-color:var(--c1)}
+.fgroup input[type=number]{width:88px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;
+  background:var(--card);color:var(--text);font:inherit;font-size:13.5px}
+.fspacer{flex:1}
+.reload{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;white-space:nowrap}
+.reload b{color:var(--text);font-variant-numeric:tabular-nums}
+.pbtn{font:inherit;font-size:13px;padding:4px 11px;border-radius:6px;border:1px solid var(--btn-line);
+  background:var(--btn);color:var(--btn-text);cursor:pointer;white-space:nowrap}
+.pbtn:hover{filter:brightness(.96)}
+header h1{margin:0 0 10px;font-size:28px;letter-spacing:.02em}
+.meta{display:flex;gap:28px;color:var(--muted);font-size:14px;flex-wrap:wrap}
+.meta b{color:var(--text);font-weight:600}
+.note{margin-top:16px;padding:12px 16px;background:var(--card);border-left:4px solid var(--c1);
+  border-radius:6px;box-shadow:var(--shadow)}
+.today{margin-top:14px;padding:12px 16px;background:var(--card);border-radius:8px;box-shadow:var(--shadow);
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;font-size:14px}
+.today .tl{font-weight:700}
+.today .item{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.today .item b{font-size:15px}
+.fnote{color:var(--muted);font-size:12.5px;margin-top:6px}
+section{margin-top:40px}
+section h2{font-size:19px;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.sub{color:var(--muted);font-size:13px;margin:-6px 0 14px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:var(--card);border-radius:10px;padding:18px 18px 16px;box-shadow:var(--shadow);
+  border-top:4px solid var(--line);display:flex;flex-direction:column;gap:5px;min-height:290px}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card .city{font-size:20px;font-weight:700}
+.card .air{color:var(--muted);font-size:12px}
+.card .price{font-size:28px;font-weight:700;letter-spacing:.01em;margin-top:4px}
+.card .line{font-size:13.5px}
+.card .muted{color:var(--muted);font-size:12.5px}
+.card .empty{color:var(--muted);margin-top:18px;font-size:14px}
+.card .acts{margin-top:auto;padding-top:8px}
+.delta-up{color:var(--up);font-weight:600}
+.delta-down{color:var(--down);font-weight:600}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.b-low{color:var(--down);background:var(--down-bg)}
+.b-up{color:var(--up);background:var(--up-bg)}
+.b-first{color:var(--first);background:var(--first-bg)}
+.b-info{color:var(--info);background:var(--info-bg)}
+.acts{display:inline-flex;gap:6px;flex-wrap:wrap}
+.bk{display:inline-block;font-size:12.5px;line-height:1.5;padding:3px 9px;border-radius:6px;border:1px solid var(--btn-line);
+  background:var(--btn);color:var(--btn-text);cursor:pointer;white-space:nowrap;font-family:inherit}
+.bk:hover{text-decoration:none;filter:brightness(.95)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.tbl-block{margin-bottom:26px}
+.tbl-block h3{font-size:16px;margin:0 0 8px;display:flex;align-items:center;gap:6px}
+.tbl-block h3 .cnt{color:var(--muted);font-size:12.5px;font-weight:400;margin-left:8px}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);font-size:13.5px}
+th,td{padding:8px 9px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+td .acts{flex-wrap:nowrap;gap:4px}
+td .bk{font-size:12px;padding:2px 7px}
+th{background:var(--th);font-weight:600;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none}
+th.nosort{cursor:default}
+th:hover{color:var(--text)}
+th .ind{display:inline-block;width:12px;margin-left:3px;font-size:10px;color:var(--text)}
+td.num,th.num{text-align:right}
+tbody tr:hover{background:var(--hover)}
+tbody tr:last-child td{border-bottom:none}
+tr.ow td{color:var(--muted)}
+tr.ow td.rank{font-weight:600}
+td.empty{color:var(--muted);text-align:center;padding:18px}
+.chart-box{background:var(--card);border-radius:10px;padding:18px 20px 10px;box-shadow:var(--shadow)}
+.legend{display:flex;gap:22px;font-size:14px;margin-bottom:6px}
+.legend span{display:inline-flex;align-items:center}
+.legend i{display:inline-block;width:22px;height:3px;border-radius:2px;margin-right:7px}
+.chart-wrap{position:relative}
+.chart-wrap svg{display:block;width:100%;height:auto}
+.chart-wrap .axis{fill:var(--muted);font-size:12px}
+.chart-wrap .grid{stroke:var(--line);stroke-width:1}
+.chart-wrap .budget{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:6 5}
+.tip{position:absolute;pointer-events:none;background:var(--text);color:var(--card);font-size:13px;
+  padding:6px 10px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-115%);display:none;z-index:5}
+.howto{margin:14px 0 4px;padding:12px 16px;background:var(--th);border-radius:8px;font-size:13.5px}
+.howto b{display:block;margin-bottom:4px}
+.howto ul{margin:0;padding-left:20px}
+.howto li{margin:2px 0}
+.promos{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.promo{background:var(--card);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
+.promo .t{font-weight:700;font-size:15px}
+.promo dl{display:grid;grid-template-columns:72px 1fr;gap:2px 10px;margin:8px 0 0;font-size:13.5px}
+.promo dt{color:var(--muted)}
+.promo dd{margin:0}
+.status{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.panel{background:var(--card);border-radius:10px;padding:14px 18px;box-shadow:var(--shadow)}
+.panel h3{font-size:15px;margin:0 0 8px}
+.panel ul{margin:0;padding-left:20px}
+.none{color:var(--muted)}
+.empty-state{margin-top:40px;background:var(--card);border-radius:12px;padding:56px 24px;text-align:center;box-shadow:var(--shadow)}
+.empty-state .big{font-size:26px;font-weight:700}
+.empty-state p{color:var(--muted);margin:10px 0 0}
+.err{margin-top:24px;padding:14px 18px;border-radius:8px;background:var(--up-bg);color:var(--up)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--text);color:var(--card);
+  padding:8px 18px;border-radius:8px;font-size:14px;z-index:50;display:none;box-shadow:var(--shadow)}
+footer{margin-top:48px;color:var(--muted);font-size:12.5px}
+</style>
+</head>
+<body data-render-status="pending">
+<div id="fbar" class="fbar"></div>
+<div class="wrap main" id="app"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="application/json" id="flight-data">{"generated_at":"2026-10-01 16:24","scan_count":1,"skipped":0,"up_threshold_pct":15,"reload_min":30,"origins":["TPE","TSA","KHH","RMQ"],"cities":[{"name":"東京","airports":"NRT / HND","code":"TYO","color":1},{"name":"福岡","airports":"FUK","code":"FUK","color":2},{"name":"函館","airports":"HKD","code":"HKD","color":3},{"name":"札幌","airports":"CTS","code":"CTS","color":4}],"latest":{"t":1790843044000,"scan_text":"2026-10-01 16:24","note":"四城市來回最低：東京 TPE-NRT 7,003（Jetstar）、福岡 TPE-FUK 7,151、函館 TPE-HKD 10,509（轉機）、札幌 KHH-CTS 10,137（轉機）；Google Flights/Skyscanner 抓不到價，主要靠 Trip.com/KAYAK/HotelsCombined；KAYAK 與 Trip.com 頁面只寫月日，年份判定為 2026；札幌 TPE-CTS 兩筆為 HotelsCombined 9/27–28 找到的快照價（出發日為今天）。","has_meta":true,"promos":[{"title":"台灣虎航 2027 夏季航班開賣：東京／福岡單程未稅 NT$1,799–1,899 起、函館 NT$2,599 起","airline":"Tigerair Taiwan","sale_period":"2026-10-01 10:00–23:59 尊榮虎／TeamMax 優先；2026-10-02～10-03 10:00–23:59 一般會員","travel_period":"2027-03-28～2027-10-30（與 180 天範圍僅重疊 3/28–3/30）","url":"https://www.tigerairtw.com/zh-TW/news/260929"},{"title":"台灣虎航 2026 冬季航班第二波：桃園／高雄–福岡單程未稅 1,799 元起（已截止）","airline":"Tigerair Taiwan","sale_period":"2026-06-10 起（已截止）","travel_period":"2026-10-25～2027-03-27","url":"https://tw.news.yahoo.com/%E8%99%8E%E8%88%AA%E5%86%AC%E5%AD%A3%E8%88%AA%E7%8F%AD%E7%AC%AC%E4%BA%8C%E6%B3%A2%E4%BF%83%E9%8A%B7%E4%BE%86%E4%BA%86-%E6%9C%80%E4%BD%8E1199%E5%85%83%E8%B5%B7-10%E9%BB%9E%E9%96%8B%E6%90%B6-011300192.html"},{"title":"台灣虎航 2026 冬季航班開賣：桃園–函館／札幌單程未稅 NT$2,599 起、高雄–札幌 NT$3,299 起（已截止）","airline":"Tigerair Taiwan","sale_period":"2026-04-15～04-17（已截止）","travel_period":"2026-10-25～2027-03-27","url":"https://udn.com/news/story/7270/9433511"},{"title":"星宇航空台中–札幌新航線開航，每週 5 班直飛","airline":"StarLux","sale_period":"未標示","travel_period":"2026-10-02 起","url":"https://www.starlux-airlines.com/flights/zh-tw/flights-from-taichung-to-sapporo"}],"blocked":[{"source":"Google Flights","reason":"WebFetch 抓回空白或截斷，看不到價格（動態頁面）"},{"source":"Skyscanner","reason":"只回傳頁首，沒有票價"},{"source":"Expedia TW","reason":"HTTP 429 Too Many Requests"},{"source":"Trip.com TSA 航線頁（FUK/HKD/CTS）","reason":"HTTP 404"},{"source":"KAYAK RMQ→東京","reason":"頁面票價為 2024 年過期資料，未收"},{"source":"航空公司官網即時票價","reason":"查價需送出搜尋表單，依規定不送出"}],"no_route":[{"origin":"TSA","dest":"NRT"},{"origin":"RMQ","dest":"HND"},{"origin":"TSA","dest":"FUK"},{"origin":"RMQ","dest":"FUK"},{"origin":"TSA","dest":"HKD"},{"origin":"TSA","dest":"CTS"}]},"rows":[{"city":"東京","trip":"oneway","origin":"TPE","dest":"NRT","airline":"Peach Aviation","depart":"2026-10-27","depart_text":"2026-10-27 (二)","return":"","return_text":"—","nonstop":true,"price":3361,"currency":"TWD","price_text":"NT$ 3,361","source":"Trip.com","source_url":"https://tw.trip.com/flights/taipei-to-tokyo/airfares-tpe-tyo/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Jetstar","depart":"2026-10-31","depart_text":"2026-10-31 (六)","return":"2026-11-07","return_text":"2026-11-07 (六)","nonstop":true,"price":7003,"currency":"TWD","price_text":"NT$ 7,003","source":"Trip.com","source_url":"https://tw.trip.com/flights/taipei-to-tokyo/airfares-tpe-tyo/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"多家航空(Multiple carriers)","depart":"2026-11-01","depart_text":"2026-11-01 (日)","return":"2026-11-06","return_text":"2026-11-06 (五)","nonstop":true,"price":7575,"currency":"TWD","price_text":"NT$ 7,575","source":"KAYAK","source_url":"https://www.tw.kayak.com/%E8%88%AA%E7%8F%AD/%E5%8F%B0%E7%81%A3-TW0/%E6%9D%B1%E4%BA%AC-TYO","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"東京","trip":"roundtrip","origin":"KHH","dest":"NRT","airline":"Jetstar Japan","depart":"2026-10-31","depart_text":"2026-10-31 (六)","return":"2026-11-04","return_text":"2026-11-04 (三)","nonstop":true,"price":8348,"currency":"TWD","price_text":"NT$ 8,348","source":"KAYAK","source_url":"https://www.tw.kayak.com/航班/高雄-KHH/東京-TYO","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"東京","trip":"roundtrip","origin":"TSA","dest":"HND","airline":"ANA","depart":"2026-10-10","depart_text":"2026-10-10 (六)","return":"2026-10-14","return_text":"2026-10-14 (三)","nonstop":true,"price":12172,"currency":"TWD","price_text":"NT$ 12,172","source":"KAYAK","source_url":"https://www.tw.kayak.com/航班/台北-松山-TSA/東京-羽田-HND","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"東京","trip":"roundtrip","origin":"RMQ","dest":"NRT","airline":"StarLux","depart":"2026-10-14","depart_text":"2026-10-14 (三)","return":"2026-10-18","return_text":"2026-10-18 (日)","nonstop":true,"price":14112,"currency":"TWD","price_text":"NT$ 14,112","source":"Trip.com","source_url":"https://tw.trip.com/flights/taichung-to-tokyo/airfares-rmq-tyo/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"福岡","trip":"oneway","origin":"TPE","dest":"FUK","airline":"Tigerair Taiwan","depart":"2026-10-27","depart_text":"2026-10-27 (二)","return":"","return_text":"—","nonstop":true,"price":2979,"currency":"TWD","price_text":"NT$ 2,979","source":"KAYAK","source_url":"https://www.tw.kayak.com/航班/台北-台灣桃園國際及其他機場-TPE/福岡機場-FUK","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"AirAsia","depart":"2026-10-07","depart_text":"2026-10-07 (三)","return":"2026-10-14","return_text":"2026-10-14 (三)","nonstop":true,"price":7151,"currency":"TWD","price_text":"NT$ 7,151","source":"Trip.com","source_url":"https://tw.trip.com/flights/taipei-to-fukuoka/airfares-tpe-fuk/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"福岡","trip":"roundtrip","origin":"KHH","dest":"FUK","airline":"Tigerair Taiwan","depart":"2026-10-04","depart_text":"2026-10-04 (日)","return":"2026-10-09","return_text":"2026-10-09 (五)","nonstop":true,"price":7326,"currency":"TWD","price_text":"NT$ 7,326","source":"Trip.com","source_url":"https://tw.trip.com/flights/kaohsiung-to-fukuoka/airfares-khh-fuk/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"Tigerair Taiwan","depart":"2026-10-20","depart_text":"2026-10-20 (二)","return":"2026-10-23","return_text":"2026-10-23 (五)","nonstop":true,"price":7328,"currency":"TWD","price_text":"NT$ 7,328","source":"Trip.com","source_url":"https://tw.trip.com/flights/taipei-to-fukuoka/airfares-tpe-fuk/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"函館","trip":"oneway","origin":"TPE","dest":"HKD","airline":"Jetstar","depart":"2026-11-17","depart_text":"2026-11-17 (二)","return":"","return_text":"—","nonstop":false,"price":5627,"currency":"TWD","price_text":"NT$ 5,627","source":"Trip.com","source_url":"https://tw.trip.com/flights/taipei-to-hakodate/airfares-tpe-hkd/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"函館","trip":"oneway","origin":"KHH","dest":"HKD","airline":"Jetstar","depart":"2026-11-11","depart_text":"2026-11-11 (三)","return":"","return_text":"—","nonstop":false,"price":5729,"currency":"TWD","price_text":"NT$ 5,729","source":"Trip.com","source_url":"https://tw.trip.com/flights/kaohsiung-to-hakodate/airfares-khh-hkd/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"函館","trip":"oneway","origin":"RMQ","dest":"HKD","airline":"Mandarin Airlines","depart":"2026-11-30","depart_text":"2026-11-30 (一)","return":"","return_text":"—","nonstop":false,"price":7872,"currency":"TWD","price_text":"NT$ 7,872","source":"Trip.com","source_url":"https://tw.trip.com/flights/taichung-to-hakodate/airfares-rmq-hkd/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Jetstar","depart":"2026-10-27","depart_text":"2026-10-27 (二)","return":"2026-11-03","return_text":"2026-11-03 (二)","nonstop":false,"price":10509,"currency":"TWD","price_text":"NT$ 10,509","source":"Trip.com","source_url":"https://tw.trip.com/flights/taipei-to-hakodate/airfares-tpe-hkd/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","depart":"2026-10-12","depart_text":"2026-10-12 (一)","return":"2026-10-15","return_text":"2026-10-15 (四)","nonstop":true,"price":10657,"currency":"TWD","price_text":"NT$ 10,657","source":"Trip.com","source_url":"https://tw.trip.com/flights/taipei-to-hakodate/airfares-tpe-hkd/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","depart":"2026-10-05","depart_text":"2026-10-05 (一)","return":"2026-10-12","return_text":"2026-10-12 (一)","nonstop":true,"price":11292,"currency":"TWD","price_text":"NT$ 11,292","source":"Trip.com","source_url":"https://tw.trip.com/flights/taipei-to-hakodate/airfares-tpe-hkd/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"函館","trip":"roundtrip","origin":"RMQ","dest":"HKD","airline":"Jeju Air + Mandarin Airlines","depart":"2026-11-30","depart_text":"2026-11-30 (一)","return":"2026-12-04","return_text":"2026-12-04 (五)","nonstop":false,"price":15538,"currency":"TWD","price_text":"NT$ 15,538","source":"Trip.com","source_url":"https://tw.trip.com/flights/taichung-to-hakodate/airfares-rmq-hkd/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"函館","trip":"roundtrip","origin":"KHH","dest":"HKD","airline":"Thai Lion Air","depart":"2026-10-30","depart_text":"2026-10-30 (五)","return":"2026-11-02","return_text":"2026-11-02 (一)","nonstop":false,"price":15691,"currency":"TWD","price_text":"NT$ 15,691","source":"Trip.com","source_url":"https://tw.trip.com/flights/kaohsiung-to-hakodate/airfares-khh-hkd/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"札幌","trip":"oneway","origin":"TPE","dest":"CTS","airline":"Scoot","depart":"2026-10-06","depart_text":"2026-10-06 (二)","return":"","return_text":"—","nonstop":true,"price":3209,"currency":"TWD","price_text":"NT$ 3,209","source":"HotelsCombined","source_url":"https://www.hotelscombined.com.tw/flight-routes/Taipei-City-Taiwan-Taoyuan-Intl-TPE/Sapporo-Chitose-CTS.ksp","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"札幌","trip":"roundtrip","origin":"KHH","dest":"CTS","airline":"Mandarin Airlines + Tigerair Taiwan","depart":"2026-10-28","depart_text":"2026-10-28 (三)","return":"2026-11-02","return_text":"2026-11-02 (一)","nonstop":false,"price":10137,"currency":"TWD","price_text":"NT$ 10,137","source":"Trip.com","source_url":"https://tw.trip.com/flights/city-khh-airport-cts/","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"未標示","depart":"2026-10-01","depart_text":"2026-10-01 (四)","return":"2026-10-05","return_text":"2026-10-05 (一)","nonstop":true,"price":10168,"currency":"TWD","price_text":"NT$ 10,168","source":"HotelsCombined","source_url":"https://www.hotelscombined.com.tw/flight-routes/Taipei-City-Taiwan-Taoyuan-Intl-TPE/Sapporo-Chitose-CTS.ksp","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Thai Vietjet Air","depart":"2026-10-01","depart_text":"2026-10-01 (四)","return":"2026-10-07","return_text":"2026-10-07 (三)","nonstop":true,"price":10232,"currency":"TWD","price_text":"NT$ 10,232","source":"HotelsCombined","source_url":"https://www.hotelscombined.com.tw/flight-routes/Taipei-City-Taiwan-Taoyuan-Intl-TPE/Sapporo-Chitose-CTS.ksp","scan_text":"2026-10-01 16:24","scan_key":1790843044.0},{"city":"札幌","trip":"roundtrip","origin":"RMQ","dest":"CTS","airline":"StarLux","depart":"2026-10-12","depart_text":"2026-10-12 (一)","return":"2026-10-17","return_text":"2026-10-17 (六)","nonstop":true,"price":20695,"currency":"TWD","price_text":"NT$ 20,695","source":"StarLux 官網","source_url":"https://www.starlux-airlines.com/flights/zh-tw/flights-from-taichung-to-sapporo","scan_text":"2026-10-01 16:24","scan_key":1790843044.0}],"hist":[{"t":1790843044000,"label":"2026-10-01 16:24","m":{"東京":{"TPE|y":7003,"KHH|y":8348,"TSA|y":12172,"RMQ|y":14112},"福岡":{"TPE|y":7151,"KHH|y":7326},"函館":{"TPE|n":10509,"TPE|y":10657,"RMQ|n":15538,"KHH|n":15691},"札幌":{"KHH|n":10137,"TPE|y":10168,"RMQ|y":20695}}}],"price_max":20695}</script>
+<script>
+(function(){
+'use strict';
+var SVGNS = 'http://www.w3.org/2000/svg';
+var STORE_KEY = 'jpflights.filters.v1';
+var WD = '日一二三四五六';
+var D, F, KNOWN, SLIDER_MAX, sortStates = {};
+
+/* ---------- DOM 小工具 ---------- */
+function el(tag, cls, text){
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined && text !== null) e.textContent = text;
+  return e;
+}
+function add(parent){
+  for (var i = 1; i < arguments.length; i++){
+    var c = arguments[i];
+    if (c === null || c === undefined) continue;
+    parent.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+  }
+  return parent;
+}
+function clear(n){ while (n.firstChild) n.removeChild(n.firstChild); return n; }
+function extLink(url, text, cls){
+  if (!url) return el('span', null, text);
+  var a = el('a', cls || null, text);
+  a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+  return a;
+}
+function svg(tag, attrs){
+  var e = document.createElementNS(SVGNS, tag);
+  for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function extend(a, b){ var o = {}, k; for (k in a) o[k] = a[k]; for (k in b) o[k] = b[k]; return o; }
+function colorVar(n){ return 'var(--c' + n + ')'; }
+function fmtNum(n){ return Number.isInteger(n) ? n.toLocaleString('en-US') : n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fmtNT(n){ return 'NT$ ' + Math.round(n).toLocaleString('en-US'); }
+function nonstopText(v){ return v === true ? '直飛' : (v === false ? '轉機' : '—'); }
+function cityInfo(name){ for (var i = 0; i < D.cities.length; i++) if (D.cities[i].name === name) return D.cities[i]; return null; }
+
+/* ---------- 訂票連結 ---------- */
+function ymd(iso){ return (iso || '').slice(0, 10); }
+function yymmdd(iso){ var d = ymd(iso).replace(/-/g, ''); return d.length === 8 ? d.slice(2) : ''; }
+function destCode(r){ var c = cityInfo(r.city); return r.dest || (c ? c.code : ''); }
+function gfUrl(r){
+  var o = r.origin, d = destCode(r);
+  if (!o || !d || !ymd(r.depart)) return '';
+  var q = 'Flights from ' + o + ' to ' + d + ' on ' + ymd(r.depart);
+  if (r.trip === 'roundtrip' && ymd(r['return'])) q += ' through ' + ymd(r['return']);
+  return 'https://www.google.com/travel/flights?q=' + encodeURIComponent(q) + '&curr=TWD&hl=zh-TW';
+}
+function ssUrl(r){
+  var o = r.origin.toLowerCase(), d = destCode(r).toLowerCase(), a = yymmdd(r.depart);
+  if (!o || !d || !a) return '';
+  var u = 'https://www.skyscanner.com.tw/transport/flights/' + o + '/' + d + '/' + a + '/';
+  if (r.trip === 'roundtrip' && yymmdd(r['return'])) u += yymmdd(r['return']) + '/';
+  return u + '?adultsv2=1&currency=TWD';
+}
+function shortDay(iso){
+  var p = ymd(iso).split('-');
+  if (p.length !== 3) return iso || '';
+  var wd = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay();
+  return (+p[1]) + '/' + (+p[2]) + '(' + WD.charAt(wd) + ')';
+}
+function compactPrice(r){ return r.currency === 'TWD' ? 'NT$' + fmtNum(r.price) : r.currency + ' ' + fmtNum(r.price); }
+function copyLine(r){
+  var dates = shortDay(r.depart) + (r.trip === 'roundtrip' && r['return'] ? '–' + shortDay(r['return']) : ' 單程');
+  return [r.city, r.origin + '→' + destCode(r), r.airline, dates, nonstopText(r.nonstop), compactPrice(r), gfUrl(r)].join('｜');
+}
+
+/* ---------- 剪貼簿 ---------- */
+var toastTimer = null;
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.style.display = 'none'; }, 1600);
+}
+function copyFallback(text){
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+  document.body.removeChild(ta);
+  toast(ok ? '已複製' : '複製失敗,請手動複製');
+}
+function copyText(text){
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      // 剪貼簿 API 失敗或 1 秒內沒回應(某些環境會卡住)就退回 textarea + execCommand
+      var done = false;
+      var timer = setTimeout(function(){ if (!done){ done = true; copyFallback(text); } }, 1000);
+      navigator.clipboard.writeText(text).then(
+        function(){ if (!done){ done = true; clearTimeout(timer); toast('已複製'); } },
+        function(){ if (!done){ done = true; clearTimeout(timer); copyFallback(text); } });
+      return;
+    }
+  } catch (e) {}
+  copyFallback(text);
+}
+function actions(r){
+  var box = el('span', 'acts');
+  var g = gfUrl(r), k = ssUrl(r);
+  if (g) add(box, extLink(g, 'Google Flights', 'bk bk-gf'));
+  if (k) add(box, extLink(k, 'Skyscanner', 'bk bk-ss'));
+  var c = el('button', 'bk bk-copy', '複製');
+  c.type = 'button';
+  c.setAttribute('data-copy', copyLine(r));
+  c.addEventListener('click', function(){ copyText(c.getAttribute('data-copy')); });
+  add(box, c);
+  return box;
+}
+
+/* ---------- 篩選狀態 ---------- */
+function defaults(){ return {origins: D.origins.slice(), nonstop: false, budget: null}; }
+function loadFilters(){
+  var f = defaults();
+  try {
+    var raw = window.localStorage.getItem(STORE_KEY);
+    if (!raw) return f;
+    var o = JSON.parse(raw);
+    if (!o || typeof o !== 'object') return f;
+    if (Object.prototype.toString.call(o.origins) === '[object Array]')
+      f.origins = o.origins.filter(function(x){ return D.origins.indexOf(x) >= 0; });
+    f.nonstop = o.nonstop === true;
+    f.budget = (typeof o.budget === 'number' && isFinite(o.budget) && o.budget > 0) ? o.budget : null;
+  } catch (e) { return defaults(); }
+  return f;
+}
+function saveFilters(){
+  try { window.localStorage.setItem(STORE_KEY, JSON.stringify(F)); } catch (e) {}
+}
+function originOk(o){ return KNOWN.indexOf(o) < 0 || F.origins.indexOf(o) >= 0; }
+function rowOk(r, ignoreBudget){
+  if (!originOk(r.origin)) return false;
+  if (F.nonstop && r.nonstop !== true) return false;
+  if (!ignoreBudget && F.budget !== null && r.currency === 'TWD' && r.price > F.budget) return false;
+  return true;
+}
+function bucketOk(b){
+  var p = b.split('|');
+  return originOk(p[0]) && (!F.nonstop || p[1] === 'y');
+}
+function scanMin(entry, city){
+  var m = entry.m[city]; if (!m) return null;
+  var best = null;
+  for (var b in m) if (Object.prototype.hasOwnProperty.call(m, b) && bucketOk(b)){
+    if (best === null || m[b] < best) best = m[b];
+  }
+  return best;
+}
+function rankCmp(a, b){
+  var ca = a.currency === 'TWD' ? 0 : 1, cb = b.currency === 'TWD' ? 0 : 1;
+  if (ca !== cb) return ca - cb;
+  if (a.price !== b.price) return a.price - b.price;
+  return (a.depart || '9999') < (b.depart || '9999') ? -1 : ((a.depart || '9999') > (b.depart || '9999') ? 1 : 0);
+}
+
+/* ---------- 依篩選重算 ---------- */
+function computeCity(c){
+  var rows = D.rows.filter(function(r){ return r.city === c.name && rowOk(r, false); });
+  var rt = rows.filter(function(r){ return r.trip === 'roundtrip'; }).sort(rankCmp);
+  var ow = rows.filter(function(r){ return r.trip === 'oneway'; }).sort(rankCmp);
+  var anyNoBudget = D.rows.some(function(r){ return r.city === c.name && r.trip === 'roundtrip' && rowOk(r, true); });
+  var best = rt.length ? rt[0] : null;
+  var st = {city: c, best: best, badge: null, rt: rt, ow: ow, delta: null, prev: null, low: null,
+            overBudget: !best && anyNoBudget && F.budget !== null};
+  if (best){
+    if (best.currency !== 'TWD') st.badge = {type:'info', text:'非台幣·不比較'};
+    else {
+      var past = D.hist.filter(function(e){ return e.t < D.latest.t; })
+        .map(function(e){ return scanMin(e, c.name); }).filter(function(v){ return v !== null; });
+      if (!past.length) st.badge = {type:'first', text:'首次掃描'};
+      else {
+        st.low = Math.min.apply(null, past);
+        st.prev = past[past.length - 1];
+        st.delta = (best.price - st.prev) / st.prev * 100;
+        if (best.price < st.low) st.badge = {type:'low', text:'歷史新低'};
+        else if (best.price > st.prev * (1 + D.up_threshold_pct / 100)) st.badge = {type:'up', text:'漲'};
+      }
+    }
+  }
+  var table = rt.slice(0, 3).map(function(r, i){ return extend(r, {rank_sort: i + 1, rank_text: String(i + 1)}); });
+  if (ow.length) table.push(extend(ow[0], {rank_sort: 4, rank_text: '單程最低'}));
+  st.table = table;
+  st.series = D.hist.map(function(e){ var v = scanMin(e, c.name); return v === null ? null : {t: e.t, label: e.label, price: v}; })
+    .filter(function(p){ return p !== null; });
+  return st;
+}
+
+/* ---------- 篩選列 ---------- */
+function budgetText(){ return F.budget === null ? '不限' : fmtNT(F.budget) + ' 以內'; }
+function buildFilterBar(hasData){
+  var bar = clear(document.getElementById('fbar'));
+  var w = el('div', 'wrap'); add(bar, w);
+  if (hasData){
+    var g1 = el('div', 'fgroup'); add(g1, el('span', 'lbl', '出發機場'));
+    D.origins.forEach(function(o){
+      var lb = el('label'), cb = el('input');
+      cb.type = 'checkbox'; cb.value = o; cb.className = 'f-origin';
+      cb.checked = F.origins.indexOf(o) >= 0;
+      cb.addEventListener('change', function(){
+        F.origins = D.origins.filter(function(x){
+          var b = bar.querySelector('input.f-origin[value="' + x + '"]'); return b && b.checked;
+        });
+        changed();
+      });
+      add(lb, cb, o); add(g1, lb);
+    });
+    var g2 = el('div', 'fgroup');
+    var lb2 = el('label'), ns = el('input'); ns.type = 'checkbox'; ns.id = 'f-nonstop'; ns.checked = F.nonstop;
+    ns.addEventListener('change', function(){ F.nonstop = ns.checked; changed(); });
+    add(lb2, ns, '只看直飛'); add(g2, lb2);
+    var g3 = el('div', 'fgroup'); add(g3, el('span', 'lbl', '預算上限'));
+    var rg = el('input'); rg.type = 'range'; rg.id = 'f-budget-range'; rg.min = 0; rg.max = SLIDER_MAX; rg.step = 500;
+    rg.value = F.budget === null ? SLIDER_MAX : Math.min(F.budget, SLIDER_MAX);
+    var nb = el('input'); nb.type = 'number'; nb.id = 'f-budget'; nb.min = 0; nb.step = 500; nb.placeholder = '不限';
+    nb.value = F.budget === null ? '' : F.budget;
+    rg.title = '拉到最右 = 不限';
+    rg.addEventListener('input', function(){
+      var v = +rg.value;
+      F.budget = v >= SLIDER_MAX ? null : (v > 0 ? v : null);
+      nb.value = F.budget === null ? '' : F.budget; changed();
+    });
+    nb.addEventListener('input', function(){
+      var v = parseFloat(nb.value);
+      F.budget = (isFinite(v) && v > 0) ? v : null;
+      rg.value = F.budget === null ? SLIDER_MAX : Math.min(F.budget, SLIDER_MAX);
+      changed();
+    });
+    add(g3, rg, nb);
+    var rs = el('button', 'pbtn', '重設篩選'); rs.type = 'button'; rs.id = 'f-reset';
+    rs.addEventListener('click', function(){ F = defaults(); saveFilters(); buildFilterBar(true); renderAll(); });
+    add(w, g1, g2, g3, rs);
+  }
+  add(w, el('div', 'fspacer'));
+  var rl = el('div', 'reload');
+  var cd = el('b', null, ''); cd.id = 'reload-countdown';
+  var rb = el('button', 'pbtn', '立即重新整理'); rb.type = 'button'; rb.id = 'reload-now';
+  rb.addEventListener('click', function(){ location.reload(); });
+  add(rl, '自動重新整理', cd, rb);
+  add(w, rl);
+}
+function changed(){ saveFilters(); renderAll(); }
+
+/* ---------- 自動重新整理 ---------- */
+function startReload(){
+  var deadline = Date.now() + D.reload_min * 60 * 1000;
+  function tick(){
+    var left = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+    var cd = document.getElementById('reload-countdown');
+    if (cd) cd.textContent = Math.floor(left / 60) + ':' + (left % 60 < 10 ? '0' : '') + (left % 60);
+    if (left <= 0){ clearInterval(timer); location.reload(); }
+  }
+  var timer = setInterval(tick, 1000);
+  tick();
+}
+
+/* ---------- 各區塊 ---------- */
+function header(){
+  var h = el('header');
+  add(h, el('h1', null, '日本便宜機票追蹤'));
+  var m = el('div', 'meta');
+  var last = el('span'); add(last, '最後掃描:', el('b', null, D.latest ? D.latest.scan_text : '尚未掃描'));
+  var cnt = el('span'); add(cnt, '累計掃描:', el('b', null, D.scan_count + ' 次'));
+  add(m, last, cnt, el('span', null, '頁面產生:' + D.generated_at));
+  add(h, m);
+  if (D.latest) add(h, el('div', 'note', D.latest.note ? '本次摘要:' + D.latest.note : '本次掃描沒有附摘要。'));
+  return h;
+}
+
+function filterDesc(){
+  var parts = [];
+  if (F.origins.length !== D.origins.length) parts.push('出發 ' + (F.origins.length ? F.origins.join('/') : '(未勾選)'));
+  if (F.nonstop) parts.push('只看直飛');
+  if (F.budget !== null) parts.push('預算 ' + budgetText());
+  return parts.length ? '目前篩選:' + parts.join(' · ') : '';
+}
+
+function todayLine(states){
+  var box = el('div', 'today'); box.id = 'today';
+  add(box, el('span', 'tl', '今天最值得看'));
+  var twd = states.filter(function(s){ return s.best && s.best.currency === 'TWD'; });
+  if (!twd.length){ add(box, el('span', 'none', '目前篩選條件下沒有台幣來回報價。')); return box; }
+  var cheapest = twd.slice().sort(function(a, b){ return a.best.price - b.best.price; })[0];
+  function item(st, label){
+    var it = el('span', 'item'); it.setAttribute('data-city', st.city.name);
+    var r = st.best;
+    add(it, el('span', 'none', label), el('b', null, st.city.name + ' ' + r.price_text),
+      el('span', null, r.origin + '→' + destCode(r) + ' ' + shortDay(r.depart) + '–' + shortDay(r['return'])));
+    if (st.badge && st.badge.type === 'low') add(it, el('span', 'badge b-low', '歷史新低'));
+    add(it, actions(r));
+    return it;
+  }
+  add(box, item(cheapest, '最便宜'));
+  states.forEach(function(st){
+    if (st !== cheapest && st.badge && st.badge.type === 'low') add(box, item(st, '新低'));
+  });
+  return box;
+}
+
+function cardsSection(states){
+  var sec = el('section'); sec.id = 'sec-cards';
+  add(sec, el('h2', null, '各城市最新最低來回價'));
+  add(sec, el('div', 'sub', '取最新一次掃描、目前篩選條件下的最低台幣來回含稅價;徽章跟過往掃描(同樣的出發機場／直飛條件)比較,漲 = 比上一次貴超過 ' + D.up_threshold_pct + '%。'));
+  var grid = el('div', 'cards');
+  states.forEach(function(st){
+    var c = st.city, x = st.best;
+    var card = el('div', 'card'); card.style.borderTopColor = colorVar(c.color); card.setAttribute('data-city', c.name);
+    var top = el('div', 'top'), nm = el('div');
+    add(nm, el('div', 'city', c.name), el('div', 'air', c.airports)); add(top, nm);
+    if (st.badge){ var b = el('span', 'badge b-' + st.badge.type, st.badge.text); b.setAttribute('data-badge', st.badge.type); add(top, b); }
+    add(card, top);
+    if (!x){
+      add(card, el('div', 'empty', st.overBudget ? '沒有 ' + budgetText() + ' 的來回報價。' : '目前篩選條件下,本次掃描沒有這個城市的來回報價。'));
+    } else {
+      add(card, el('div', 'price', x.price_text));
+      add(card, el('div', 'line', x.origin + ' → ' + (x.dest || '—') + '  ·  ' + x.airline));
+      add(card, el('div', 'line', '去程 ' + x.depart_text));
+      add(card, el('div', 'line', '回程 ' + x.return_text));
+      add(card, el('div', 'line', nonstopText(x.nonstop)));
+      if (st.delta !== null){
+        var d = el('div', 'line');
+        var cls = st.delta > 0 ? 'delta-up' : (st.delta < 0 ? 'delta-down' : '');
+        add(d, '較上次 ', el('span', cls, (st.delta > 0 ? '+' : '') + st.delta.toFixed(1) + '%'), el('span', 'muted', '(上次 ' + fmtNT(st.prev) + ')'));
+        add(card, d);
+      }
+      if (st.low !== null) add(card, el('div', 'muted', '過往最低 ' + fmtNT(st.low)));
+      var src = el('div', 'muted'); add(src, '來源:', extLink(x.source_url, x.source)); add(card, src);
+      var a = actions(x); add(card, a);
+    }
+    add(grid, card);
+  });
+  add(sec, grid);
+  return sec;
+}
+
+var COLS = [
+  {k:'rank',    t:'排名',     num:true,  v:function(r){return r.rank_sort;}},
+  {k:'origin',  t:'出發機場', num:false, v:function(r){return r.origin + '>' + r.dest;}},
+  {k:'airline', t:'航空公司', num:false, v:function(r){return r.airline;}},
+  {k:'depart',  t:'去程',     num:false, v:function(r){return r.depart || '';}},
+  {k:'return',  t:'回程',     num:false, v:function(r){return r['return'] || '';}},
+  {k:'nonstop', t:'直飛',     num:true,  v:function(r){return r.nonstop === true ? 0 : (r.nonstop === false ? 1 : 2);}},
+  {k:'price',   t:'含稅價',   num:true,  v:function(r){return r.price;}},
+  {k:'source',  t:'來源',     num:false, v:function(r){return r.source;}},
+  {k:'scan',    t:'抓取時間', num:true,  v:function(r){return r.scan_key;}},
+  {k:'act',     t:'訂票／複製', nosort:true}
+];
+function cellFor(col, r){
+  var td = el('td');
+  switch (col.k){
+    case 'rank': td.className = 'rank'; td.textContent = r.rank_text; break;
+    case 'origin': td.textContent = r.origin + (r.dest ? ' → ' + r.dest : ''); break;
+    case 'airline': td.textContent = r.airline; break;
+    case 'depart': td.textContent = r.depart ? shortDay(r.depart) : '—'; td.title = r.depart_text; break;
+    case 'return': td.textContent = r['return'] ? shortDay(r['return']) : '—'; td.title = r.return_text; break;
+    case 'nonstop': td.textContent = nonstopText(r.nonstop); break;
+    case 'price': td.className = 'num'; td.textContent = r.price_text; break;
+    case 'source': add(td, extLink(r.source_url, r.source)); break;
+    case 'scan': td.textContent = r.scan_text.slice(5); td.title = r.scan_text; break;
+    case 'act': add(td, actions(r)); break;
+  }
+  return td;
+}
+function sortableTable(rows, city){
+  var table = el('table'); table.setAttribute('data-city', city);
+  var thead = el('thead'), trh = el('tr'), tbody = el('tbody');
+  var state = sortStates[city] || (sortStates[city] = {k:null, dir:1});
+  var inds = {};
+  COLS.forEach(function(col){
+    var th = el('th', col.nosort ? 'nosort' : (col.k === 'price' ? 'num' : null));
+    th.setAttribute('data-key', col.k);
+    if (col.nosort){ add(th, col.t); add(trh, th); return; }
+    th.title = '點一下排序(再點一次反向)';
+    var ind = el('span', 'ind', ''); inds[col.k] = ind;
+    add(th, col.t, ind);
+    th.addEventListener('click', function(){
+      if (state.k === col.k) state.dir = -state.dir; else { state.k = col.k; state.dir = 1; }
+      render();
+    });
+    add(trh, th);
+  });
+  add(thead, trh); add(table, thead, tbody);
+  function render(){
+    var list = rows.slice();
+    if (state.k){
+      var col = COLS.filter(function(c){ return c.k === state.k; })[0];
+      list.sort(function(a, b){
+        var va = col.v(a), vb = col.v(b), r;
+        if (col.num) r = va - vb;
+        else {
+          if (va === '' && vb !== '') return 1;
+          if (vb === '' && va !== '') return -1;
+          r = String(va).localeCompare(String(vb), 'zh-Hant');
+        }
+        if (r === 0) r = a.rank_sort - b.rank_sort;
+        return r * state.dir;
+      });
+    }
+    clear(tbody);
+    if (!list.length){
+      var tr0 = el('tr'), td0 = el('td', 'empty', '目前篩選條件下,本次掃描沒有這個城市的報價。');
+      td0.colSpan = COLS.length; add(tr0, td0); add(tbody, tr0);
+    }
+    list.forEach(function(r){
+      var tr = el('tr', r.trip === 'oneway' ? 'ow' : null);
+      COLS.forEach(function(col){ add(tr, cellFor(col, r)); });
+      add(tbody, tr);
+    });
+    for (var k in inds){
+      var th = inds[k].parentNode;
+      if (state.k === k){ inds[k].textContent = state.dir === 1 ? '▲' : '▼'; th.setAttribute('aria-sort', state.dir === 1 ? 'ascending' : 'descending'); }
+      else { inds[k].textContent = ''; th.removeAttribute('aria-sort'); }
+    }
+  }
+  render();
+  return table;
+}
+function tablesSection(states){
+  var sec = el('section'); sec.id = 'sec-tables';
+  add(sec, el('h2', null, '各城市明細(最新一次掃描)'));
+  add(sec, el('div', 'sub', '目前篩選條件下的來回前 3 名 + 單程最低一筆;點欄位標題可排序,再點一次反向。'));
+  states.forEach(function(st){
+    var c = st.city, blk = el('div', 'tbl-block'), h = el('h3');
+    var dot = el('span', 'dot'); dot.style.background = colorVar(c.color);
+    add(h, dot, c.name + '(' + c.airports + ')', el('span', 'cnt', '符合篩選 ' + st.rt.length + ' 筆來回、' + st.ow.length + ' 筆單程'));
+    add(blk, h, sortableTable(st.table, c.name));
+    add(sec, blk);
+  });
+  return sec;
+}
+
+function niceStep(range, ticks){
+  var raw = range / Math.max(1, ticks);
+  var p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+  var m = raw / p;
+  return (m <= 1 ? 1 : (m <= 2 ? 2 : (m <= 2.5 ? 2.5 : (m <= 5 ? 5 : 10)))) * p;
+}
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function tpeParts(t){
+  var d = new Date(t + 8 * 3600 * 1000);
+  return {mo: pad2(d.getUTCMonth() + 1), da: pad2(d.getUTCDate()), h: pad2(d.getUTCHours()), mi: pad2(d.getUTCMinutes())};
+}
+function chartSection(states){
+  var sec = el('section'); sec.id = 'sec-chart';
+  add(sec, el('h2', null, '價格走勢'));
+  var box = el('div', 'chart-box'), legend = el('div', 'legend');
+  states.forEach(function(st){
+    var sp = el('span'), i = el('i'); i.style.background = colorVar(st.city.color);
+    add(sp, i, st.city.name + (st.series.length ? '' : '(無資料)')); add(legend, sp);
+  });
+  add(box, legend);
+  var pts = [];
+  states.forEach(function(st){ st.series.forEach(function(p){ pts.push(p); }); });
+  var wrap = el('div', 'chart-wrap');
+  if (!pts.length) add(wrap, el('div', 'none', '目前篩選條件下沒有台幣來回報價可畫走勢。'));
+  else {
+    var W = 1080, H = 340, L = 78, R = 24, T = 16, B = 40;
+    var tMin = Infinity, tMax = -Infinity, pMin = Infinity, pMax = -Infinity;
+    pts.forEach(function(p){ tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t); pMin = Math.min(pMin, p.price); pMax = Math.max(pMax, p.price); });
+    if (tMax === tMin){ tMin -= 12 * 3600e3; tMax += 12 * 3600e3; }
+    var span = pMax - pMin; if (span <= 0) span = Math.max(1000, pMax * 0.2);
+    var step = niceStep(span * 1.2, 5);
+    var yLo = Math.max(0, Math.floor((pMin - span * 0.1) / step) * step);
+    var yHi = Math.ceil((pMax + span * 0.1) / step) * step;
+    if (yHi === yLo) yHi = yLo + step;
+    var X = function(t){ return L + (t - tMin) / (tMax - tMin) * (W - L - R); };
+    var Y = function(v){ return T + (1 - (v - yLo) / (yHi - yLo)) * (H - T - B); };
+    var root = svg('svg', {viewBox:'0 0 ' + W + ' ' + H, role:'img', 'aria-label':'各城市最低來回價走勢'});
+    for (var v = yLo; v <= yHi + 1e-6; v += step){
+      root.appendChild(svg('line', {x1:L, x2:W - R, y1:Y(v), y2:Y(v), 'class':'grid'}));
+      var lab = svg('text', {x:L - 10, y:Y(v) + 4, 'text-anchor':'end', 'class':'axis'}); lab.textContent = fmtNT(v); root.appendChild(lab);
+    }
+    var multiDay = (tMax - tMin) > 2.5 * 86400e3, nT = 6;
+    for (var i = 0; i <= nT; i++){
+      var tt = tMin + (tMax - tMin) * i / nT, pp = tpeParts(tt);
+      var xl = svg('text', {x:X(tt), y:H - 14, 'text-anchor': i === 0 ? 'start' : (i === nT ? 'end' : 'middle'), 'class':'axis'});
+      xl.textContent = multiDay ? (pp.mo + '-' + pp.da) : (pp.mo + '-' + pp.da + ' ' + pp.h + ':' + pp.mi);
+      root.appendChild(xl);
+      root.appendChild(svg('line', {x1:X(tt), x2:X(tt), y1:H - B, y2:H - B + 5, 'class':'grid'}));
+    }
+    root.appendChild(svg('line', {x1:L, x2:W - R, y1:H - B, y2:H - B, 'class':'grid'}));
+    if (F.budget !== null && F.budget >= yLo && F.budget <= yHi){
+      root.appendChild(svg('line', {x1:L, x2:W - R, y1:Y(F.budget), y2:Y(F.budget), 'class':'budget', id:'budget-line'}));
+      var bl = svg('text', {x:W - R - 4, y:Y(F.budget) - 6, 'text-anchor':'end', 'class':'axis'}); bl.textContent = '預算上限'; root.appendChild(bl);
+    }
+    var tip = el('div', 'tip');
+    states.forEach(function(st){
+      if (!st.series.length) return;
+      var d = st.series.map(function(p){ return X(p.t).toFixed(1) + ',' + Y(p.price).toFixed(1); }).join(' ');
+      var line = svg('polyline', {points:d, fill:'none', 'stroke-width':2.5, 'stroke-linejoin':'round', 'stroke-linecap':'round', 'class':'series', 'data-city':st.city.name});
+      line.style.stroke = colorVar(st.city.color); root.appendChild(line);
+    });
+    states.forEach(function(st){
+      st.series.forEach(function(p){
+        var cx = X(p.t), cy = Y(p.price);
+        var dot = svg('circle', {cx:cx, cy:cy, r:4, 'class':'pt'});
+        dot.style.fill = colorVar(st.city.color); dot.style.stroke = 'var(--card)'; dot.style.strokeWidth = '1.5';
+        var hit = svg('circle', {cx:cx, cy:cy, r:11, fill:'transparent', 'class':'hit'}); hit.style.cursor = 'pointer';
+        var label = st.city.name + ' · ' + p.label + ' · ' + fmtNT(p.price);
+        var ttl = svg('title', {}); ttl.textContent = label; hit.appendChild(ttl);
+        hit.addEventListener('mouseenter', function(){
+          tip.textContent = label;
+          var k = root.getBoundingClientRect().width / W;
+          tip.style.left = (cx * k) + 'px'; tip.style.top = (cy * k) + 'px'; tip.style.display = 'block'; dot.setAttribute('r', 6);
+        });
+        hit.addEventListener('mouseleave', function(){ tip.style.display = 'none'; dot.setAttribute('r', 4); });
+        root.appendChild(dot); root.appendChild(hit);
+      });
+    });
+    add(wrap, root, tip);
+  }
+  add(box, wrap);
+  var how = el('div', 'howto'); add(how, el('b', null, '怎麼看'));
+  var ul = el('ul');
+  [
+    '每條線是一個城市,每個點是那一次掃描找到的最低台幣來回含稅價。',
+    '線往下走代表變便宜,往上走代表變貴。',
+    '滑鼠移到點上,會顯示那次的掃描時間與價格。',
+    '線會跟著上方的出發機場、只看直飛篩選一起重算。',
+    '有設預算上限時,虛線就是預算;落在虛線以下的點才在預算內。',
+    '某城市某次沒抓到台幣來回報價就沒有點,線會直接連到下一個點。',
+    '非台幣報價不換算,所以不畫進圖裡,只在明細表照原幣列出。',
+    '每次的最低價可能落在不同出發日,看趨勢要看連續幾次的方向,不要只看一次跳動。'
+  ].forEach(function(t){ add(ul, el('li', null, t)); });
+  add(how, ul); add(box, how); add(sec, box);
+  return sec;
+}
+
+function promosSection(){
+  var sec = el('section'); add(sec, el('h2', null, '促銷活動(最新一次掃描)'));
+  var list = D.latest.promos;
+  if (!list.length){ add(sec, el('div', 'none', '本次掃描沒有發現促銷活動。')); return sec; }
+  var grid = el('div', 'promos');
+  list.forEach(function(p){
+    var c = el('div', 'promo'), t = el('div', 't'); add(t, extLink(p.url, p.title)); add(c, t);
+    var dl = el('dl');
+    [['航空公司', p.airline], ['促銷期間', p.sale_period], ['旅遊期間', p.travel_period]].forEach(function(kv){ add(dl, el('dt', null, kv[0]), el('dd', null, kv[1] || '—')); });
+    add(c, dl); add(grid, c);
+  });
+  add(sec, grid);
+  return sec;
+}
+function statusSection(){
+  var sec = el('section'); add(sec, el('h2', null, '資料狀況(最新一次掃描)'));
+  var g = el('div', 'status');
+  var p1 = el('div', 'panel'); add(p1, el('h3', null, '被擋的來源'));
+  if (!D.latest.blocked.length) add(p1, el('div', 'none', '本次沒有被擋的來源。'));
+  else { var ul1 = el('ul'); D.latest.blocked.forEach(function(b){ var li = el('li'); add(li, el('b', null, b.source), ':' + b.reason); add(ul1, li); }); add(p1, ul1); }
+  var p2 = el('div', 'panel'); add(p2, el('h3', null, '無航線組合'));
+  if (!D.latest.no_route.length) add(p2, el('div', 'none', '本次沒有回報無航線的組合。'));
+  else { var ul2 = el('ul'); D.latest.no_route.forEach(function(n){ add(ul2, el('li', null, n.origin + ' → ' + n.dest)); }); add(p2, ul2); }
+  add(g, p1, p2); add(sec, g);
+  if (D.skipped > 0) add(sec, el('div', 'sub', '另有 ' + D.skipped + ' 行資料格式不完整,已略過。'));
+  if (!D.latest.has_meta) add(sec, el('div', 'sub', '最新一次掃描在 scans.jsonl 沒有對應的中繼資料。'));
+  return sec;
+}
+
+/* ---------- 整頁渲染 ---------- */
+function renderAll(){
+  var app = clear(document.getElementById('app'));
+  var y = window.scrollY;
+  add(app, header());
+  if (!D.scan_count || !D.latest){
+    add(app, emptyState());
+  } else {
+    var states = D.cities.map(computeCity);
+    add(app, todayLine(states));
+    var fd = filterDesc(); if (fd) add(app, el('div', 'fnote', fd));
+    add(app, cardsSection(states), tablesSection(states), chartSection(states), promosSection(), statusSection());
+  }
+  add(app, el('footer', null, '價格為掃描當下抓到的含稅價,實際以航空公司／訂票網站為準。訂票按鈕會開新分頁帶入機場與日期(1 位成人、台幣)。'));
+  window.scrollTo(0, y);
+}
+function emptyState(){
+  var box = el('div', 'empty-state');
+  add(box, el('div', 'big', '尚未掃描'),
+    el('p', null, '目前還沒有任何掃描紀錄。排程第一次跑完後,這裡會出現四個城市的最低價、明細與走勢(頁面每 ' + D.reload_min + ' 分鐘會自動重新整理)。'));
+  return box;
+}
+
+try {
+  D = JSON.parse(document.getElementById('flight-data').textContent);
+  KNOWN = D.origins;
+  SLIDER_MAX = Math.max(10000, Math.ceil((D.price_max || 0) / 1000) * 1000 + 1000);
+  var hasData = !!(D.scan_count && D.latest);
+  F = hasData ? loadFilters() : defaults();
+  buildFilterBar(hasData);
+  renderAll();
+  startReload();
+  document.body.setAttribute('data-render-status', 'ok');
+} catch (e){
+  add(document.getElementById('app'), el('div', 'err', '頁面渲染失敗:' + (e && e.message ? e.message : e)));
+  document.body.setAttribute('data-render-status', 'error');
+}
+})();
+</script>
+</body>
+</html>
