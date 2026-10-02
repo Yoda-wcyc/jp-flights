@@ -11,7 +11,7 @@
   --btn:#eef2f8; --btn-text:#1d4fae; --btn-line:#d3dcea;
   --up:#c62828; --up-bg:#fde7e7; --down:#18803c; --down-bg:#e2f4e7;
   --info:#2b5797; --info-bg:#e7eef9; --first:#6b5a12; --first-bg:#f7f0d4;
-  --c1:#2563eb; --c2:#d97706; --c3:#7c3aed; --c4:#0e9aa7;
+  --c1:#2563eb; --c2:#d97706; --c3:#7c3aed; --c4:#0e9aa7; --c5:#db2777; --c6:#65a30d; --c7:#78716c;
   --shadow:0 1px 2px rgba(20,30,45,.06),0 2px 8px rgba(20,30,45,.05);
 }
 @media (prefers-color-scheme: dark){
@@ -21,7 +21,7 @@
     --btn:#223047; --btn-text:#a9c8ff; --btn-line:#34445e;
     --up:#ff7a7a; --up-bg:#3b1d20; --down:#5ad98a; --down-bg:#15301f;
     --info:#9cc0ff; --info-bg:#1d2a40; --first:#e8d27a; --first-bg:#353016;
-    --c1:#60a5fa; --c2:#fbbf24; --c3:#c4a1ff; --c4:#2dd4bf;
+    --c1:#60a5fa; --c2:#fbbf24; --c3:#c4a1ff; --c4:#2dd4bf; --c5:#f472b6; --c6:#a3e635; --c7:#d6d3d1;
     --shadow:0 1px 2px rgba(0,0,0,.4);
   }
 }
@@ -38,6 +38,8 @@ a:hover{text-decoration:underline}
 .fbar{position:sticky;top:0;z-index:20;background:var(--bar);border-bottom:1px solid var(--line);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .fbar .wrap{display:flex;align-items:center;gap:18px;padding:10px 0;font-size:14px;white-space:nowrap}
+.fbar .wrap.frow2{padding:0 0 10px}
+.fsep{width:1px;height:18px;background:var(--line);flex:none}
 .fgroup{display:flex;align-items:center;gap:9px;flex:none}
 .fgroup .lbl{color:var(--muted);font-size:13px;white-space:nowrap}
 .fgroup label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
@@ -137,7 +139,7 @@ footer{margin-top:48px;color:var(--muted);font-size:12.5px}
 <div id="fbar" class="fbar"></div>
 <div class="wrap main" id="app"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script type="application/json" id="flight-data">{"generated_at":"2026-10-02 08:58","scan_count":2,"skipped":0,"up_threshold_pct":15,"reload_min":30,"origins":["TPE","TSA","KHH","RMQ"],"cities":[{"name":"東京","airports":"NRT / HND","code":"TYO","color":1},{"name":"福岡","airports":"FUK","code":"FUK","color":2},{"name":"函館","airports":"HKD","code":"HKD","color":3},{"name":"札幌","airports":"CTS","code":"CTS","color":4}],"latest":{"t":1790901907000,"scan_text":"2026-10-02 08:45","note":"本次全用內建瀏覽器讀 Google Flights(TWD 含稅):四城市來回最低 東京 TPE-NRT 7,979(Peach,11/10-17)、福岡 TPE-FUK 9,287(轉機,11/13-17)、函館 TPE-HKD 12,573(Tigerair 直飛,11/10-17)、札幌 TPE-CTS 9,519(Jin Air 轉機,11/11-14);日期網格只抽樣 11 月上中旬一週與 10/27、1/12 兩個窗,未掃滿 180 天;RMQ→東京/函館、TSA 以外的松山航線未逐一查。","has_meta":true,"promos":[{"title":"台灣虎航 2027 夏季航班開賣(沿用 10/01 掃描紀錄,本次未重新驗證)","airline":"Tigerair Taiwan","sale_period":"一般會員 2026-10-02～10-03 10:00–23:59","travel_period":"2027-03-28～2027-10-30","url":"https://www.tigerairtw.com/zh-TW/news/260929"}],"blocked":[{"source":"Google Flights 日期網格","reason":"點擊時頁面常未渲染逾時,需重試;僅抽樣幾個一週區段"}],"no_route":[{"origin":"TSA","dest":"NRT"},{"origin":"TSA","dest":"FUK"},{"origin":"TSA","dest":"HKD"},{"origin":"TSA","dest":"CTS"},{"origin":"RMQ","dest":"HND"},{"origin":"RMQ","dest":"FUK"}]},"rows":[{"city":"東京","trip":"oneway","origin":"TPE","dest":"NRT","airline":"Peach Aviation","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"","return_text":"—","nonstop":true,"price":4440,"currency":"TWD","price_text":"NT$ 4,440","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20TYO%20from%20TPE%20on%202026-11-10&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Peach Aviation","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":true,"price":7979,"currency":"TWD","price_text":"NT$ 7,979","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20TPE%20on%202026-11-10%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Peach Aviation","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-13","return_text":"2026-11-13 (五)","nonstop":true,"price":8262,"currency":"TWD","price_text":"NT$ 8,262","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20TPE%20on%202026-11-10%20through%202026-11-13&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Scoot","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":true,"price":8304,"currency":"TWD","price_text":"NT$ 8,304","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20TPE%20on%202026-11-10%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"KHH","dest":"NRT","airline":"Jetstar Japan","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":9998,"currency":"TWD","price_text":"NT$ 9,998","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20KHH%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"TSA","dest":"HND","airline":"China Airlines","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":16747,"currency":"TWD","price_text":"NT$ 16,747","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HND%20from%20TSA%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"oneway","origin":"TPE","dest":"FUK","airline":"泰赫航空(Google Flights 顯示名)","depart":"2026-11-13","depart_text":"2026-11-13 (五)","return":"","return_text":"—","nonstop":false,"price":5158,"currency":"TWD","price_text":"NT$ 5,158","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20FUK%20from%20TPE%20on%202026-11-13&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"泰赫航空(Google Flights 顯示名)","depart":"2026-11-13","depart_text":"2026-11-13 (五)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":false,"price":9287,"currency":"TWD","price_text":"NT$ 9,287","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-13%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"AirAsia","depart":"2026-11-13","depart_text":"2026-11-13 (五)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":true,"price":9835,"currency":"TWD","price_text":"NT$ 9,835","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-13%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"roundtrip","origin":"KHH","dest":"FUK","airline":"泰赫航空(Google Flights 顯示名)","depart":"2026-11-13","depart_text":"2026-11-13 (五)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":false,"price":11019,"currency":"TWD","price_text":"NT$ 11,019","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20KHH%20on%202026-11-13%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"AirAsia","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":11664,"currency":"TWD","price_text":"NT$ 11,664","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"oneway","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"","return_text":"—","nonstop":true,"price":6899,"currency":"TWD","price_text":"NT$ 6,899","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20HKD%20from%20TPE%20on%202026-11-10&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":true,"price":12573,"currency":"TWD","price_text":"NT$ 12,573","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202026-11-10%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":13173,"currency":"TWD","price_text":"NT$ 13,173","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"StarLux","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":17404,"currency":"TWD","price_text":"NT$ 17,404","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"roundtrip","origin":"KHH","dest":"HKD","airline":"United + Air Do","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":false,"price":23728,"currency":"TWD","price_text":"NT$ 23,728","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20KHH%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"oneway","origin":"TPE","dest":"CTS","airline":"Jin Air","depart":"2026-11-11","depart_text":"2026-11-11 (三)","return":"","return_text":"—","nonstop":false,"price":5062,"currency":"TWD","price_text":"NT$ 5,062","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20CTS%20from%20TPE%20on%202026-11-11&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Jin Air","depart":"2026-11-11","depart_text":"2026-11-11 (三)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":false,"price":9519,"currency":"TWD","price_text":"NT$ 9,519","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-11%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Scoot","depart":"2026-11-07","depart_text":"2026-11-07 (六)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":9633,"currency":"TWD","price_text":"NT$ 9,633","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-07%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Tigerair Taiwan","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":9854,"currency":"TWD","price_text":"NT$ 9,854","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"RMQ","dest":"CTS","airline":"Jin Air","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":false,"price":12066,"currency":"TWD","price_text":"NT$ 12,066","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20RMQ%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"KHH","dest":"CTS","airline":"泰赫航空(Google Flights 顯示名)","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":false,"price":13078,"currency":"TWD","price_text":"NT$ 13,078","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20KHH%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0}],"hist":[{"t":1790843044000,"label":"2026-10-01 16:24","m":{"東京":{"TPE|y":7003,"KHH|y":8348,"TSA|y":12172,"RMQ|y":14112},"福岡":{"TPE|y":7151,"KHH|y":7326},"函館":{"TPE|n":10509,"TPE|y":10657,"RMQ|n":15538,"KHH|n":15691},"札幌":{"KHH|n":10137,"TPE|y":10168,"RMQ|y":20695}}},{"t":1790901907000,"label":"2026-10-02 08:45","m":{"東京":{"TPE|y":7979,"KHH|y":9998,"TSA|y":16747},"福岡":{"TPE|n":9287,"TPE|y":9835,"KHH|n":11019},"函館":{"TPE|y":12573,"KHH|n":23728},"札幌":{"TPE|n":9519,"TPE|y":9633,"RMQ|n":12066,"KHH|n":13078}}}],"price_max":23728}</script>
+<script type="application/json" id="flight-data">{"generated_at":"2026-10-02 09:02","scan_count":2,"skipped":0,"up_threshold_pct":15,"reload_min":30,"origins":["TPE","TSA","KHH","RMQ"],"atypes":[{"k":"lcc","t":"廉航"},{"k":"fsc","t":"傳統航空"}],"cities":[{"name":"東京","airports":"NRT / HND","code":"TYO","color":1},{"name":"大阪","airports":"KIX / ITM","code":"OSA","color":2},{"name":"札幌","airports":"CTS","code":"CTS","color":3},{"name":"仙台","airports":"SDJ","code":"SDJ","color":4},{"name":"福岡","airports":"FUK","code":"FUK","color":5},{"name":"函館","airports":"HKD","code":"HKD","color":6},{"name":"岡山","airports":"OKJ","code":"OKJ","color":7}],"latest":{"t":1790901907000,"scan_text":"2026-10-02 08:45","note":"本次全用內建瀏覽器讀 Google Flights(TWD 含稅):四城市來回最低 東京 TPE-NRT 7,979(Peach,11/10-17)、福岡 TPE-FUK 9,287(轉機,11/13-17)、函館 TPE-HKD 12,573(Tigerair 直飛,11/10-17)、札幌 TPE-CTS 9,519(Jin Air 轉機,11/11-14);日期網格只抽樣 11 月上中旬一週與 10/27、1/12 兩個窗,未掃滿 180 天;RMQ→東京/函館、TSA 以外的松山航線未逐一查。","has_meta":true,"promos":[{"title":"台灣虎航 2027 夏季航班開賣(沿用 10/01 掃描紀錄,本次未重新驗證)","airline":"Tigerair Taiwan","sale_period":"一般會員 2026-10-02～10-03 10:00–23:59","travel_period":"2027-03-28～2027-10-30","url":"https://www.tigerairtw.com/zh-TW/news/260929"}],"blocked":[{"source":"Google Flights 日期網格","reason":"點擊時頁面常未渲染逾時,需重試;僅抽樣幾個一週區段"}],"no_route":[{"origin":"TSA","dest":"NRT"},{"origin":"TSA","dest":"FUK"},{"origin":"TSA","dest":"HKD"},{"origin":"TSA","dest":"CTS"},{"origin":"RMQ","dest":"HND"},{"origin":"RMQ","dest":"FUK"}]},"rows":[{"city":"東京","trip":"oneway","origin":"TPE","dest":"NRT","airline":"Peach Aviation","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"","return_text":"—","nonstop":true,"price":4440,"currency":"TWD","price_text":"NT$ 4,440","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20TYO%20from%20TPE%20on%202026-11-10&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Peach Aviation","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":true,"price":7979,"currency":"TWD","price_text":"NT$ 7,979","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20TPE%20on%202026-11-10%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Peach Aviation","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-13","return_text":"2026-11-13 (五)","nonstop":true,"price":8262,"currency":"TWD","price_text":"NT$ 8,262","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20TPE%20on%202026-11-10%20through%202026-11-13&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Scoot","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":true,"price":8304,"currency":"TWD","price_text":"NT$ 8,304","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20TPE%20on%202026-11-10%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"KHH","dest":"NRT","airline":"Jetstar Japan","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":9998,"currency":"TWD","price_text":"NT$ 9,998","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20KHH%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"東京","trip":"roundtrip","origin":"TSA","dest":"HND","airline":"China Airlines","atype":"fsc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":16747,"currency":"TWD","price_text":"NT$ 16,747","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HND%20from%20TSA%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"oneway","origin":"TPE","dest":"CTS","airline":"Jin Air","atype":"lcc","depart":"2026-11-11","depart_text":"2026-11-11 (三)","return":"","return_text":"—","nonstop":false,"price":5062,"currency":"TWD","price_text":"NT$ 5,062","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20CTS%20from%20TPE%20on%202026-11-11&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Jin Air","atype":"lcc","depart":"2026-11-11","depart_text":"2026-11-11 (三)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":false,"price":9519,"currency":"TWD","price_text":"NT$ 9,519","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-11%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Scoot","atype":"lcc","depart":"2026-11-07","depart_text":"2026-11-07 (六)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":9633,"currency":"TWD","price_text":"NT$ 9,633","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-07%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Tigerair Taiwan","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":9854,"currency":"TWD","price_text":"NT$ 9,854","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"RMQ","dest":"CTS","airline":"Jin Air","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":false,"price":12066,"currency":"TWD","price_text":"NT$ 12,066","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20RMQ%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"札幌","trip":"roundtrip","origin":"KHH","dest":"CTS","airline":"泰赫航空(Google Flights 顯示名)","atype":"unknown","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":false,"price":13078,"currency":"TWD","price_text":"NT$ 13,078","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20KHH%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"oneway","origin":"TPE","dest":"FUK","airline":"泰赫航空(Google Flights 顯示名)","atype":"unknown","depart":"2026-11-13","depart_text":"2026-11-13 (五)","return":"","return_text":"—","nonstop":false,"price":5158,"currency":"TWD","price_text":"NT$ 5,158","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20FUK%20from%20TPE%20on%202026-11-13&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"泰赫航空(Google Flights 顯示名)","atype":"unknown","depart":"2026-11-13","depart_text":"2026-11-13 (五)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":false,"price":9287,"currency":"TWD","price_text":"NT$ 9,287","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-13%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"AirAsia","atype":"lcc","depart":"2026-11-13","depart_text":"2026-11-13 (五)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":true,"price":9835,"currency":"TWD","price_text":"NT$ 9,835","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-13%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"roundtrip","origin":"KHH","dest":"FUK","airline":"泰赫航空(Google Flights 顯示名)","atype":"unknown","depart":"2026-11-13","depart_text":"2026-11-13 (五)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":false,"price":11019,"currency":"TWD","price_text":"NT$ 11,019","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20KHH%20on%202026-11-13%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"AirAsia","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":11664,"currency":"TWD","price_text":"NT$ 11,664","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"oneway","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"","return_text":"—","nonstop":true,"price":6899,"currency":"TWD","price_text":"NT$ 6,899","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20HKD%20from%20TPE%20on%202026-11-10&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-17","return_text":"2026-11-17 (二)","nonstop":true,"price":12573,"currency":"TWD","price_text":"NT$ 12,573","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202026-11-10%20through%202026-11-17&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":13173,"currency":"TWD","price_text":"NT$ 13,173","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"StarLux","atype":"fsc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":true,"price":17404,"currency":"TWD","price_text":"NT$ 17,404","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0},{"city":"函館","trip":"roundtrip","origin":"KHH","dest":"HKD","airline":"United + Air Do","atype":"fsc","depart":"2026-11-10","depart_text":"2026-11-10 (二)","return":"2026-11-14","return_text":"2026-11-14 (六)","nonstop":false,"price":23728,"currency":"TWD","price_text":"NT$ 23,728","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20KHH%20on%202026-11-10%20through%202026-11-14&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-02 08:45","scan_key":1790901907.0}],"hist":[{"t":1790843044000,"label":"2026-10-01 16:24","m":{"東京":{"TPE|y|lcc":7003,"TPE|y|unknown":7575,"KHH|y|lcc":8348,"TSA|y|fsc":12172,"RMQ|y|fsc":14112},"福岡":{"TPE|y|lcc":7151,"KHH|y|lcc":7326},"函館":{"TPE|n|lcc":10509,"TPE|y|lcc":10657,"RMQ|n|mix":15538,"KHH|n|lcc":15691},"札幌":{"KHH|n|mix":10137,"TPE|y|unknown":10168,"TPE|y|lcc":10232,"RMQ|y|fsc":20695}}},{"t":1790901907000,"label":"2026-10-02 08:45","m":{"東京":{"TPE|y|lcc":7979,"KHH|y|lcc":9998,"TSA|y|fsc":16747},"福岡":{"TPE|n|unknown":9287,"TPE|y|lcc":9835,"KHH|n|unknown":11019},"函館":{"TPE|y|lcc":12573,"TPE|y|fsc":17404,"KHH|n|fsc":23728},"札幌":{"TPE|n|lcc":9519,"TPE|y|lcc":9633,"RMQ|n|lcc":12066,"KHH|n|unknown":13078}}}],"price_max":23728}</script>
 <script>
 (function(){
 'use strict';
@@ -145,6 +147,7 @@ var SVGNS = 'http://www.w3.org/2000/svg';
 var STORE_KEY = 'jpflights.filters.v1';
 var WD = '日一二三四五六';
 var D, F, KNOWN, SLIDER_MAX, sortStates = {};
+var ATYPE_TEXT = {lcc: '廉航', fsc: '傳統', mix: '混搭', unknown: '未分類'};
 
 /* ---------- DOM 小工具 ---------- */
 function el(tag, cls, text){
@@ -256,7 +259,9 @@ function actions(r){
 }
 
 /* ---------- 篩選狀態 ---------- */
-function defaults(){ return {origins: D.origins.slice(), nonstop: false, budget: null}; }
+function allCities(){ return D.cities.map(function(c){ return c.name; }); }
+function allAtypes(){ return D.atypes.map(function(a){ return a.k; }); }
+function defaults(){ return {origins: D.origins.slice(), cities: allCities(), atypes: allAtypes(), nonstop: false, budget: null}; }
 function loadFilters(){
   var f = defaults();
   try {
@@ -266,6 +271,10 @@ function loadFilters(){
     if (!o || typeof o !== 'object') return f;
     if (Object.prototype.toString.call(o.origins) === '[object Array]')
       f.origins = o.origins.filter(function(x){ return D.origins.indexOf(x) >= 0; });
+    if (Object.prototype.toString.call(o.cities) === '[object Array]')
+      f.cities = o.cities.filter(function(x){ return allCities().indexOf(x) >= 0; });
+    if (Object.prototype.toString.call(o.atypes) === '[object Array]')
+      f.atypes = o.atypes.filter(function(x){ return allAtypes().indexOf(x) >= 0; });
     f.nonstop = o.nonstop === true;
     f.budget = (typeof o.budget === 'number' && isFinite(o.budget) && o.budget > 0) ? o.budget : null;
   } catch (e) { return defaults(); }
@@ -275,15 +284,22 @@ function saveFilters(){
   try { window.localStorage.setItem(STORE_KEY, JSON.stringify(F)); } catch (e) {}
 }
 function originOk(o){ return KNOWN.indexOf(o) < 0 || F.origins.indexOf(o) >= 0; }
+/* 航空類型:勾廉航只看純廉航、勾傳統只看純傳統;混搭與未分類要兩個都勾才顯示 */
+function atypeOk(t){
+  if (t === 'lcc' || t === 'fsc') return F.atypes.indexOf(t) >= 0;
+  return F.atypes.length === D.atypes.length;
+}
+function cityOk(name){ return F.cities.indexOf(name) >= 0; }
 function rowOk(r, ignoreBudget){
   if (!originOk(r.origin)) return false;
+  if (!atypeOk(r.atype)) return false;
   if (F.nonstop && r.nonstop !== true) return false;
   if (!ignoreBudget && F.budget !== null && r.currency === 'TWD' && r.price > F.budget) return false;
   return true;
 }
 function bucketOk(b){
   var p = b.split('|');
-  return originOk(p[0]) && (!F.nonstop || p[1] === 'y');
+  return originOk(p[0]) && (!F.nonstop || p[1] === 'y') && atypeOk(p[2] || 'unknown');
 }
 function scanMin(entry, city){
   var m = entry.m[city]; if (!m) return null;
@@ -376,6 +392,28 @@ function buildFilterBar(hasData){
     var rs = el('button', 'pbtn', '重設篩選'); rs.type = 'button'; rs.id = 'f-reset';
     rs.addEventListener('click', function(){ F = defaults(); saveFilters(); buildFilterBar(true); renderAll(); });
     add(w, g1, g2, g3, rs);
+    // 第二列:城市、航空類型
+    var w2 = el('div', 'wrap frow2'); add(bar, w2);
+    function checkGroup(label, cls, items, field){
+      var g = el('div', 'fgroup'); add(g, el('span', 'lbl', label));
+      items.forEach(function(it){
+        var lb = el('label'), cb = el('input');
+        cb.type = 'checkbox'; cb.value = it.k; cb.className = cls;
+        cb.checked = F[field].indexOf(it.k) >= 0;
+        cb.addEventListener('change', function(){
+          F[field] = items.map(function(x){ return x.k; }).filter(function(k){
+            var b = bar.querySelector('input.' + cls + '[value="' + k + '"]'); return b && b.checked;
+          });
+          changed();
+        });
+        add(lb, cb, it.t); add(g, lb);
+      });
+      return g;
+    }
+    add(w2,
+      checkGroup('城市', 'f-city', D.cities.map(function(c){ return {k: c.name, t: c.name}; }), 'cities'),
+      el('span', 'fsep'),
+      checkGroup('航空公司', 'f-atype', D.atypes, 'atypes'));
   }
   add(w, el('div', 'fspacer'));
   var rl = el('div', 'reload');
@@ -415,6 +453,9 @@ function header(){
 function filterDesc(){
   var parts = [];
   if (F.origins.length !== D.origins.length) parts.push('出發 ' + (F.origins.length ? F.origins.join('/') : '(未勾選)'));
+  if (F.cities.length !== D.cities.length) parts.push('城市 ' + (F.cities.length ? F.cities.join('/') : '(未勾選)'));
+  if (F.atypes.length !== D.atypes.length)
+    parts.push(F.atypes.length ? D.atypes.filter(function(a){ return F.atypes.indexOf(a.k) >= 0; }).map(function(a){ return a.t; }).join('/') : '航空類型(未勾選)');
   if (F.nonstop) parts.push('只看直飛');
   if (F.budget !== null) parts.push('預算 ' + budgetText());
   return parts.length ? '目前篩選:' + parts.join(' · ') : '';
@@ -460,6 +501,7 @@ var COLS = [
   {k:'rank',    t:'排名',     num:true,  v:function(r){return r.rank_sort;}},
   {k:'origin',  t:'出發機場', num:false, v:function(r){return r.origin + '>' + r.dest;}},
   {k:'airline', t:'航空公司', num:false, v:function(r){return r.airline;}},
+  {k:'atype',   t:'類型',     num:false, v:function(r){return ATYPE_TEXT[r.atype] || '未分類';}},
   {k:'depart',  t:'去程',     num:false, v:function(r){return r.depart || '';}},
   {k:'return',  t:'回程',     num:false, v:function(r){return r['return'] || '';}},
   {k:'nonstop', t:'直飛',     num:true,  v:function(r){return r.nonstop === true ? 0 : (r.nonstop === false ? 1 : 2);}},
@@ -474,6 +516,7 @@ function cellFor(col, r){
     case 'rank': td.className = 'rank'; td.textContent = r.rank_text; break;
     case 'origin': td.textContent = r.origin + (r.dest ? ' → ' + r.dest : ''); break;
     case 'airline': td.textContent = r.airline; break;
+    case 'atype': td.textContent = ATYPE_TEXT[r.atype] || '未分類'; break;
     case 'depart': td.textContent = r.depart ? shortDay(r.depart) : '—'; td.title = r.depart_text; break;
     case 'return': td.textContent = r['return'] ? shortDay(r['return']) : '—'; td.title = r.return_text; break;
     case 'nonstop': td.textContent = nonstopText(r.nonstop); break;
@@ -639,7 +682,8 @@ function chartSection(states){
     '每條線是一個城市,每個點是那一次掃描找到的最低台幣來回含稅價。',
     '線往下走代表變便宜,往上走代表變貴。',
     '滑鼠移到點上,會顯示那次的掃描時間與價格。',
-    '線會跟著上方的出發機場、只看直飛篩選一起重算。',
+    '線會跟著上方的出發機場、城市、航空類型、只看直飛篩選一起重算。',
+    '航空類型:只勾廉航或只勾傳統時,轉機混搭兩種航空、或認不出類型的報價會先藏起來;兩個都勾才全部顯示。',
     '有設預算上限時,虛線就是預算;落在虛線以下的點才在預算內。',
     '某城市某次沒抓到台幣來回報價就沒有點,線會直接連到下一個點。',
     '非台幣報價不換算,所以不畫進圖裡,只在明細表照原幣列出。',
@@ -686,9 +730,11 @@ function renderAll(){
   if (!D.scan_count || !D.latest){
     add(app, emptyState());
   } else {
-    var states = D.cities.map(computeCity);
+    var states = D.cities.filter(function(c){ return cityOk(c.name); }).map(computeCity);
     var fd = filterDesc(); if (fd) add(app, el('div', 'fnote', fd));
-    add(app, cardsSection(states), tablesSection(states), chartSection(states), promosSection(), statusSection());
+    if (!states.length) add(app, el('div', 'empty-state', '請在上方至少勾選一個城市。'));
+    else add(app, cardsSection(states), tablesSection(states), chartSection(states));
+    add(app, promosSection(), statusSection());
   }
   add(app, el('footer', null, '價格為掃描當下抓到的含稅價,實際以航空公司／訂票網站為準。訂票按鈕會開新分頁帶入機場與日期(1 位成人、台幣)。'));
   window.scrollTo(0, y);
@@ -696,7 +742,7 @@ function renderAll(){
 function emptyState(){
   var box = el('div', 'empty-state');
   add(box, el('div', 'big', '尚未掃描'),
-    el('p', null, '目前還沒有任何掃描紀錄。排程第一次跑完後,這裡會出現四個城市的最低價、明細與走勢(頁面每 ' + D.reload_min + ' 分鐘會自動重新整理)。'));
+    el('p', null, '目前還沒有任何掃描紀錄。排程第一次跑完後,這裡會出現各城市的最低價、明細與走勢(頁面每 ' + D.reload_min + ' 分鐘會自動重新整理)。'));
   return box;
 }
 
