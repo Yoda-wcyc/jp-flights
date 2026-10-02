@@ -39,6 +39,11 @@ a:hover{text-decoration:underline}
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .fbar .wrap{display:flex;align-items:center;gap:18px;padding:10px 0;font-size:14px;white-space:nowrap}
 .fbar .wrap.frow2{padding:0 0 10px}
+.ctabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.ctab{font:inherit;font-size:14px;padding:7px 14px;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;
+  background:none;color:var(--muted);cursor:pointer;margin-bottom:-1px}
+.ctab.on{background:var(--card);color:var(--text);font-weight:700;border-color:var(--line)}
+.ctab .cnt{font-size:11.5px;margin-left:6px;color:var(--muted);font-weight:400}
 .fsep{width:1px;height:18px;background:var(--line);flex:none}
 .fgroup{display:flex;align-items:center;gap:9px;flex:none}
 .fgroup .lbl{color:var(--muted);font-size:13px;white-space:nowrap}
@@ -147,7 +152,9 @@ var SVGNS = 'http://www.w3.org/2000/svg';
 var STORE_KEY = 'jpflights.filters.v1';
 var WD = '日一二三四五六';
 var D, F, KNOWN, SLIDER_MAX, sortStates = {};
-var ATYPE_TEXT = {lcc: '廉航', fsc: '傳統', mix: '混搭', unknown: '未分類'};
+var activeTab = null;
+try { activeTab = localStorage.getItem('jpflights.filters.v1.tab'); } catch (e) {}
+var ATYPE_TEXT ={lcc: '廉航', fsc: '傳統', mix: '混搭', unknown: '未分類'};
 
 /* ---------- DOM 小工具 ---------- */
 function el(tag, cls, text){
@@ -585,13 +592,27 @@ function tablesSection(states){
   var sec = el('section'); sec.id = 'sec-tables';
   add(sec, el('h2', null, '各城市明細(最新一次掃描)'));
   add(sec, el('div', 'sub', '目前篩選條件下的來回前 3 名 + 單程最低一筆;點欄位標題可排序,再點一次反向。'));
-  states.forEach(function(st){
-    var c = st.city, blk = el('div', 'tbl-block'), h = el('h3');
-    var dot = el('span', 'dot'); dot.style.background = colorVar(c.color);
-    add(h, dot, c.name + '(' + c.airports + ')', el('span', 'cnt', '符合篩選 ' + st.rt.length + ' 筆來回、' + st.ow.length + ' 筆單程'));
-    add(blk, h, sortableTable(st.table, c.name));
-    add(sec, blk);
-  });
+  var names = states.map(function(st){ return st.city.name; });
+  if (names.indexOf(activeTab) < 0) activeTab = names[0];
+  var tabs = el('div', 'ctabs'), body = el('div');
+  add(sec, tabs, body);
+  function show(){
+    clear(tabs); clear(body);
+    states.forEach(function(st){
+      var c = st.city, b = el('button', 'ctab' + (c.name === activeTab ? ' on' : ''));
+      b.type = 'button';
+      var dot = el('span', 'dot'); dot.style.background = colorVar(c.color);
+      add(b, dot, c.name, el('span', 'cnt', String(st.rt.length + st.ow.length)));
+      b.addEventListener('click', function(){ activeTab = c.name; try { localStorage.setItem(STORE_KEY + '.tab', activeTab); } catch (e) {} show(); });
+      add(tabs, b);
+      if (c.name !== activeTab) return;
+      var blk = el('div', 'tbl-block'), h = el('h3');
+      add(h, c.name + '(' + c.airports + ')', el('span', 'cnt', '符合篩選 ' + st.rt.length + ' 筆來回、' + st.ow.length + ' 筆單程'));
+      add(blk, h, sortableTable(st.table, c.name));
+      add(body, blk);
+    });
+  }
+  show();
   return sec;
 }
 
