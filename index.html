@@ -2,13 +2,14 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=1200">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>日本便宜機票追蹤</title>
 <style>
 :root{
   --bg:#f5f6f8; --card:#ffffff; --text:#1b2330; --muted:#5a6575; --line:#e2e6eb;
   --th:#f0f2f5; --hover:#f7f9fb; --link:#1d5fd1; --bar:rgba(245,246,248,.94);
   --btn:#eef2f8; --btn-text:#1d4fae; --btn-line:#d3dcea;
+  --accent:#1d5fd1; --accent-text:#ffffff; --hl-bg:#eaf2ff; --hl-line:#c7d9f7;
   --up:#c62828; --up-bg:#fde7e7; --down:#18803c; --down-bg:#e2f4e7;
   --info:#2b5797; --info-bg:#e7eef9; --first:#6b5a12; --first-bg:#f7f0d4;
   --c1:#2563eb; --c2:#d97706; --c3:#7c3aed; --c4:#0e9aa7; --c5:#db2777; --c6:#65a30d; --c7:#78716c;
@@ -19,6 +20,7 @@
     --bg:#111519; --card:#1a2028; --text:#e7ebf0; --muted:#9ba6b5; --line:#2c3440;
     --th:#212833; --hover:#202731; --link:#82b2ff; --bar:rgba(17,21,25,.94);
     --btn:#223047; --btn-text:#a9c8ff; --btn-line:#34445e;
+    --accent:#3b7be8; --accent-text:#ffffff; --hl-bg:#17243a; --hl-line:#2b3f60;
     --up:#ff7a7a; --up-bg:#3b1d20; --down:#5ad98a; --down-bg:#15301f;
     --info:#9cc0ff; --info-bg:#1d2a40; --first:#e8d27a; --first-bg:#353016;
     --c1:#60a5fa; --c2:#fbbf24; --c3:#c4a1ff; --c4:#2dd4bf; --c5:#f472b6; --c6:#a3e635; --c7:#d6d3d1;
@@ -27,94 +29,108 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--bg);color:var(--text);min-width:1200px;
+body{background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%;
   font-family:system-ui,-apple-system,"Segoe UI","Microsoft JhengHei","微軟正黑體","PingFang TC","Noto Sans TC",sans-serif;
   font-size:15px;line-height:1.6}
 a{color:var(--link);text-decoration:none}
 a:hover{text-decoration:underline}
-.wrap{width:1120px;margin:0 auto}
-.main{padding:28px 0 64px}
-/* 篩選列(sticky) */
+.wrap{max-width:1152px;margin:0 auto;padding-left:16px;padding-right:16px}
+.main{padding-top:22px;padding-bottom:40px}
+button{font-family:inherit}
+/* 篩選列(sticky,一排) */
 .fbar{position:sticky;top:0;z-index:20;background:var(--bar);border-bottom:1px solid var(--line);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.fbar .wrap{display:flex;align-items:center;gap:18px;padding:10px 0;font-size:14px;white-space:nowrap}
-.fbar .wrap.frow2{padding:0 0 10px}
-.ctabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;border-bottom:1px solid var(--line)}
-.ctab{font:inherit;font-size:14px;padding:7px 14px;border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;
-  background:none;color:var(--muted);cursor:pointer;margin-bottom:-1px}
-.ctab.on{background:var(--card);color:var(--text);font-weight:700;border-color:var(--line)}
-.ctab .cnt{font-size:11.5px;margin-left:6px;color:var(--muted);font-weight:400}
-.cal{background:var(--card);border-radius:10px;padding:14px 16px;margin:12px 0 16px;box-shadow:var(--shadow)}
-.cal-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}
-.cal-leg{font:inherit;font-size:14px;padding:6px 12px;border-radius:8px;border:2px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
-.cal-leg0.on{border-color:var(--c1)} .cal-leg1.on{border-color:var(--c5)}
-.cal-sync{color:var(--down);font-size:12.5px}
-.cal-nav{display:flex;justify-content:space-between;margin:10px 0 6px}
-.cal-months{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.cal-title{font-weight:700;text-align:center;margin-bottom:6px}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-wd{text-align:center;font-size:12px;color:var(--muted)}
-.cal-day{font:inherit;font-size:13.5px;padding:6px 0;border:none;border-radius:6px;background:none;color:var(--text);cursor:pointer}
-.cal-day:hover{background:var(--hover);outline:1px solid var(--line)}
-.cal-day.off{color:var(--line);cursor:default}
-.cal-day.r0{background:var(--info-bg)} .cal-day.s0{background:var(--c1);color:#fff;font-weight:700}
-.cal-day.r1{background:var(--up-bg)} .cal-day.s1{background:var(--c5);color:#fff;font-weight:700}
-.revtbl{max-height:470px;overflow:auto;border-radius:8px}
-.revtbl thead th{position:sticky;top:0;z-index:1}
-.fsep{width:1px;height:18px;background:var(--line);flex:none}
-.fgroup{display:flex;align-items:center;gap:9px;flex:none}
-.fgroup .lbl{color:var(--muted);font-size:13px;white-space:nowrap}
-.fgroup label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
-.fgroup input[type=checkbox]{margin:0;width:15px;height:15px;accent-color:var(--c1)}
-.fgroup input[type=range]{width:130px;accent-color:var(--c1)}
-.fgroup input[type=number]{width:88px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;
+.frow{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;padding-top:8px;padding-bottom:8px;font-size:14px}
+.chips{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.lbl{color:var(--muted);font-size:13px;white-space:nowrap}
+.chip{font-size:13.5px;line-height:1.4;padding:4px 11px;border-radius:999px;border:1px solid var(--btn-line);
+  background:var(--card);color:var(--muted);cursor:pointer;white-space:nowrap}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--btn);color:var(--btn-text);border-color:var(--btn-text);font-weight:600}
+.chip.on::before{content:"✓ "}
+.budget{display:flex;align-items:center;gap:6px}
+.budget input[type=range]{width:120px;accent-color:var(--c1);margin:0}
+.budget input[type=number]{width:86px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;
   background:var(--card);color:var(--text);font:inherit;font-size:13.5px}
 .fspacer{flex:1}
-.reload{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;white-space:nowrap}
-.reload b{color:var(--text);font-variant-numeric:tabular-nums}
-.pbtn{font:inherit;font-size:13px;padding:4px 11px;border-radius:6px;border:1px solid var(--btn-line);
+.pbtn{font-size:13px;line-height:1.4;padding:4px 11px;border-radius:6px;border:1px solid var(--btn-line);
   background:var(--btn);color:var(--btn-text);cursor:pointer;white-space:nowrap}
 .pbtn:hover{filter:brightness(.96)}
-header h1{margin:0 0 10px;font-size:28px;letter-spacing:.02em}
-.meta{display:flex;gap:28px;color:var(--muted);font-size:14px;flex-wrap:wrap}
-.meta b{color:var(--text);font-weight:600}
-.fnote{color:var(--muted);font-size:12.5px;margin-top:6px}
-section{margin-top:36px;padding:22px 24px 24px;background:var(--th);border:1px solid var(--line);
+.pbtn.hot{border-color:var(--btn-text);font-weight:600}
+.adv{border-top:1px solid var(--line);padding-top:8px;padding-bottom:10px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.adv[hidden]{display:none}
+.fgroup{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px}
+.fgroup label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+.fgroup input[type=checkbox]{margin:0;width:15px;height:15px;accent-color:var(--c1)}
+/* 頁首與一句話結論 */
+.hero h1{margin:0 0 10px;font-size:26px;letter-spacing:.02em}
+.verdict{display:flex;align-items:center;flex-wrap:wrap;gap:6px 16px;background:var(--hl-bg);border:1px solid var(--hl-line);
+  border-radius:12px;padding:14px 18px}
+.verdict .vk{font-size:13px;color:var(--muted);white-space:nowrap}
+.verdict .vmain{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px}
+.verdict .vcity{font-size:20px;font-weight:700}
+.verdict .vprice{font-size:26px;font-weight:800;letter-spacing:.01em}
+.verdict .vinfo{font-size:14.5px}
+.verdict .vnone{color:var(--muted)}
+.verdict .btn-primary{margin-left:auto}
+.unit{font-size:12px;color:var(--muted);font-weight:400;white-space:nowrap}
+.metaline{color:var(--muted);font-size:12.5px;margin-top:8px}
+.fnote{color:var(--muted);font-size:12.5px;margin-top:4px}
+.btn-primary{display:inline-block;padding:7px 14px;border-radius:8px;background:var(--accent);color:var(--accent-text);
+  font-weight:600;font-size:14px;white-space:nowrap;border:none;cursor:pointer}
+.btn-primary:hover{text-decoration:none;filter:brightness(1.07)}
+/* 區塊 */
+section{margin-top:28px;padding:20px 22px 22px;background:var(--th);border:1px solid var(--line);
   border-top:5px solid var(--c1);border-radius:12px;box-shadow:var(--shadow)}
-section h2{font-size:20px;margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid var(--line)}
-#sec-tables{border-top-color:var(--c2)} #sec-reverse{border-top-color:var(--c5)}
-#sec-chart{border-top-color:var(--c4)} #sec-promos{border-top-color:var(--c6)} #sec-status{border-top-color:var(--c7)}
-.sub{color:var(--muted);font-size:13px;margin:-6px 0 14px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.card{background:var(--card);border-radius:10px;padding:18px 18px 16px;box-shadow:var(--shadow);
-  border-top:4px solid var(--line);display:flex;flex-direction:column;gap:5px;min-height:290px}
+section h2{font-size:19px;margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+#sec-promos{border-top-color:var(--c6)} #sec-chart{border-top-color:var(--c4)} #sec-reverse{border-top-color:var(--c5)}
+.sub{color:var(--muted);font-size:13px;margin:-4px 0 14px}
+.none{color:var(--muted)}
+/* 城市卡 */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border-radius:12px;padding:15px 16px 14px;box-shadow:var(--shadow);border-top:4px solid var(--line);
+  display:flex;flex-direction:column;gap:5px;cursor:pointer;outline:2px solid transparent;outline-offset:-1px;min-width:0}
+.card:hover{outline-color:var(--line)}
+.card.sel{outline-color:var(--link)}
+.card:focus-visible{outline-color:var(--link)}
 .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.card .city{font-size:20px;font-weight:700}
+.card .city{font-size:19px;font-weight:700;line-height:1.3}
 .card .air{color:var(--muted);font-size:12px}
-.card .price{font-size:28px;font-weight:700;letter-spacing:.01em;margin-top:4px}
+.card .pr{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;margin-top:2px}
+.card .price{font-size:28px;font-weight:800;letter-spacing:.01em;line-height:1.25}
 .card .line{font-size:13.5px}
 .card .muted{color:var(--muted);font-size:12.5px}
-.card .empty{color:var(--muted);margin-top:18px;font-size:14px}
-.card .acts{margin-top:auto;padding-top:8px}
+.card .empty{color:var(--muted);margin-top:10px;font-size:13.5px}
+.card .acts{margin-top:auto;padding-top:8px;display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px}
+.minor{font-size:12.5px;color:var(--link);background:none;border:none;padding:0;cursor:pointer}
+.minor:hover{text-decoration:underline}
+.more{align-self:flex-start;font-size:12.5px;color:var(--muted);background:none;border:none;padding:2px 0 0;cursor:pointer}
+.more:hover{color:var(--text)}
+.pos{margin:6px 0 0}
+.pos .track{position:relative;height:8px;border-radius:4px;border:1px solid var(--line);
+  background:linear-gradient(90deg,var(--down-bg),var(--up-bg))}
+.pos .mark{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--text);
+  border:2px solid var(--card);transform:translate(-50%,-50%)}
+.pos .ends{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted);margin-top:2px}
 .delta-up{color:var(--up);font-weight:600}
 .delta-down{color:var(--down);font-weight:600}
-.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;line-height:1.5}
 .b-low{color:var(--down);background:var(--down-bg)}
 .b-up{color:var(--up);background:var(--up-bg)}
 .b-first{color:var(--first);background:var(--first-bg)}
 .b-info{color:var(--info);background:var(--info-bg)}
-.acts{display:inline-flex;gap:6px;flex-wrap:wrap}
-.bk{display:inline-block;font-size:12.5px;line-height:1.5;padding:3px 9px;border-radius:6px;border:1px solid var(--btn-line);
-  background:var(--btn);color:var(--btn-text);cursor:pointer;white-space:nowrap;font-family:inherit}
-.bk:hover{text-decoration:none;filter:brightness(.95)}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:1px}
-.tbl-block{margin-bottom:26px}
-.tbl-block h3{font-size:16px;margin:0 0 8px;display:flex;align-items:center;gap:6px}
-.tbl-block h3 .cnt{color:var(--muted);font-size:12.5px;font-weight:400;margin-left:8px}
+/* 明細 */
+.detail{margin-top:16px;background:var(--card);border-radius:12px;padding:14px 16px 16px;box-shadow:var(--shadow);
+  border-left:5px solid var(--line);scroll-margin-top:64px}
+.dhead{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin-bottom:4px}
+.dhead h3{font-size:17px;margin:0}
+.dhead .cnt{color:var(--muted);font-size:12.5px}
+.sub2{color:var(--muted);font-size:12.5px;margin:0 0 8px}
+.tscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:8px}
 table{width:100%;border-collapse:collapse;background:var(--card);border-radius:8px;overflow:hidden;box-shadow:var(--shadow);font-size:13.5px}
+.detail table{box-shadow:none;border:1px solid var(--line)}
 th,td{padding:8px 9px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
-td .acts{flex-wrap:nowrap;gap:4px}
-td .bk{font-size:12px;padding:2px 7px}
 th{background:var(--th);font-weight:600;font-size:12.5px;color:var(--muted);cursor:pointer;user-select:none}
 th.nosort{cursor:default}
 th:hover{color:var(--text)}
@@ -123,10 +139,24 @@ td.num,th.num{text-align:right}
 tbody tr:hover{background:var(--hover)}
 tbody tr:last-child td{border-bottom:none}
 tr.ow td{color:var(--muted)}
-tr.ow td.rank{font-weight:600}
 td.empty{color:var(--muted);text-align:center;padding:18px}
-.chart-box{background:var(--card);border-radius:10px;padding:18px 20px 10px;box-shadow:var(--shadow)}
-.legend{display:flex;gap:22px;font-size:14px;margin-bottom:6px}
+.tag-ow{display:inline-block;font-size:11.5px;font-weight:600;padding:0 8px;border-radius:999px;background:var(--first-bg);color:var(--first)}
+.acts{display:inline-flex;gap:4px;flex-wrap:nowrap}
+.bk{display:inline-block;font-size:12px;line-height:1.5;padding:2px 7px;border-radius:6px;border:1px solid var(--btn-line);
+  background:var(--btn);color:var(--btn-text);cursor:pointer;white-space:nowrap}
+.bk:hover{text-decoration:none;filter:brightness(.95)}
+/* 收合 */
+details>summary{cursor:pointer;list-style:none}
+details>summary::-webkit-details-marker{display:none}
+.arr::before{content:"▸";display:inline-block;width:1em}
+details[open]>summary .arr::before{content:"▾"}
+.more-how{margin-top:8px;font-size:13.5px}
+.more-how>summary{color:var(--link);font-size:13px}
+.more-how ul{margin:6px 0 0;padding-left:20px}
+.more-how li{margin:2px 0}
+/* 走勢 */
+.chart-box{background:var(--card);border-radius:10px;padding:16px 20px 12px;box-shadow:var(--shadow)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;margin-bottom:6px}
 .legend span{display:inline-flex;align-items:center}
 .legend i{display:inline-block;width:22px;height:3px;border-radius:2px;margin-right:7px}
 .chart-wrap{position:relative}
@@ -136,35 +166,79 @@ td.empty{color:var(--muted);text-align:center;padding:18px}
 .chart-wrap .budget{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:6 5}
 .tip{position:absolute;pointer-events:none;background:var(--text);color:var(--card);font-size:13px;
   padding:6px 10px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-115%);display:none;z-index:5}
-.howto{margin:14px 0 4px;padding:12px 16px;background:var(--th);border-radius:8px;font-size:13.5px}
-.howto b{display:block;margin-bottom:4px}
-.howto ul{margin:0;padding-left:20px}
-.howto li{margin:2px 0}
-.promos{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.howline{margin-top:10px;font-size:13.5px;color:var(--muted)}
+/* 促銷 */
+.promos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .promo{background:var(--card);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow)}
 .promo .t{font-weight:700;font-size:15px}
 .promo dl{display:grid;grid-template-columns:72px 1fr;gap:2px 10px;margin:8px 0 0;font-size:13.5px}
 .promo dt{color:var(--muted)}
 .promo dd{margin:0}
-.status{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.panel{background:var(--card);border-radius:10px;padding:14px 18px;box-shadow:var(--shadow)}
-.panel h3{font-size:15px;margin:0 0 8px}
-.panel ul{margin:0;padding-left:20px}
-.none{color:var(--muted)}
-.empty-state{margin-top:40px;background:var(--card);border-radius:12px;padding:56px 24px;text-align:center;box-shadow:var(--shadow)}
-.empty-state .big{font-size:26px;font-weight:700}
+/* 反向票 */
+.secdet>summary h2{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin-bottom:0;border-bottom:none;padding-bottom:0}
+.secdet[open]>summary h2{margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+.secdet>summary .hint{font-size:13px;font-weight:400;color:var(--muted)}
+.steps{margin:0 0 6px;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.steps li{background:var(--card);border-radius:8px;padding:9px 12px;font-size:13.5px;box-shadow:var(--shadow)}
+.steps b{display:inline-block;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;
+  background:var(--c5);color:#fff;font-size:12.5px;margin-right:6px}
+.cal{background:var(--card);border-radius:10px;padding:14px 16px;margin:12px 0 16px;box-shadow:var(--shadow)}
+.cal-bar{display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap;font-size:14px}
+.cal-leg{font-size:14px;padding:6px 12px;border-radius:8px;border:2px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.cal-leg0.on{border-color:var(--c1)} .cal-leg1.on{border-color:var(--c5)}
+.cal-sync{color:var(--down);font-size:12.5px}
+.cal-nav{display:flex;justify-content:space-between;margin:10px 0 6px}
+.cal-months{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.cal-title{font-weight:700;text-align:center;margin-bottom:6px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-wd{text-align:center;font-size:12px;color:var(--muted)}
+.cal-day{font-size:13.5px;padding:6px 0;border:none;border-radius:6px;background:none;color:var(--text);cursor:pointer}
+.cal-day:hover{background:var(--hover);outline:1px solid var(--line)}
+.cal-day.off{color:var(--line);cursor:default}
+.cal-day.r0{background:var(--info-bg)} .cal-day.s0{background:var(--c1);color:#fff;font-weight:700}
+.cal-day.r1{background:var(--up-bg)} .cal-day.s1{background:var(--c5);color:#fff;font-weight:700}
+.revtbl{max-height:470px;overflow:auto;border-radius:8px}
+.revtbl thead th{position:sticky;top:0;z-index:1}
+/* 其他 */
+.empty-state{margin-top:28px;background:var(--card);border-radius:12px;padding:48px 24px;text-align:center;box-shadow:var(--shadow)}
+.empty-state .big{font-size:24px;font-weight:700}
 .empty-state p{color:var(--muted);margin:10px 0 0}
-.err{margin-top:24px;padding:14px 18px;border-radius:8px;background:var(--up-bg);color:var(--up)}
+.err{margin-top:16px;padding:12px 16px;border-radius:8px;background:var(--up-bg);color:var(--up)}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--text);color:var(--card);
   padding:8px 18px;border-radius:8px;font-size:14px;z-index:50;display:none;box-shadow:var(--shadow)}
-footer{margin-top:48px;color:var(--muted);font-size:12.5px}
+footer{margin-top:36px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:12px}
+.statusdet>summary{color:var(--muted);font-size:13px}
+.statusdet>summary:hover{color:var(--text)}
+.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:10px}
+.panel{background:var(--card);border-radius:10px;padding:12px 16px;box-shadow:var(--shadow);font-size:13px;color:var(--text)}
+.panel h3{font-size:14px;margin:0 0 6px}
+.panel ul{margin:0;padding-left:20px}
+.reload{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.reload b{color:var(--text);font-variant-numeric:tabular-nums}
+@media (max-width:1099px){
+  .cal-months{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  .fbar{position:static}
+  .frow{gap:8px 12px}
+  .budget input[type=range]{width:96px}
+  .hero h1{font-size:22px}
+  .verdict{padding:12px 14px}
+  .verdict .btn-primary{margin-left:0}
+  section{padding:16px 12px 16px;margin-top:22px}
+  .chart-box{padding:12px 10px 10px}
+  .cards{grid-template-columns:1fr}
+  .cal{padding:12px 10px}
+  .cal-months{grid-template-columns:1fr}
+  .detail{padding:12px 10px 12px}
+}
 </style>
 </head>
 <body data-render-status="pending">
 <div id="fbar" class="fbar"></div>
 <div class="wrap main" id="app"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script type="application/json" id="flight-data">{"generated_at":"2026-10-04 07:13","scan_count":5,"skipped":0,"up_threshold_pct":15,"reload_min":30,"origins":["TPE","TSA","KHH","RMQ"],"atypes":[{"k":"lcc","t":"廉航"},{"k":"fsc","t":"傳統航空"}],"fsc_list":[{"k":"CI","t":"中華航空"},{"k":"BR","t":"長榮航空"},{"k":"JX","t":"星宇航空"},{"k":"JL","t":"日本航空"},{"k":"NH","t":"全日空"},{"k":"CX","t":"國泰航空"},{"k":"AE","t":"華信航空"},{"k":"UA","t":"聯合航空"},{"k":"KE","t":"大韓航空"},{"k":"OZ","t":"韓亞航空"},{"k":"TG","t":"泰國航空"},{"k":"HD","t":"北海道國際"}],"cities":[{"name":"東京","airports":"NRT / HND","code":"TYO","color":1},{"name":"大阪","airports":"KIX / ITM","code":"OSA","color":2},{"name":"札幌","airports":"CTS","code":"CTS","color":3},{"name":"仙台","airports":"SDJ","code":"SDJ","color":4},{"name":"福岡","airports":"FUK","code":"FUK","color":5},{"name":"函館","airports":"HKD","code":"HKD","color":6},{"name":"岡山","airports":"OKJ","code":"OKJ","color":7}],"latest":{"t":1791069214000,"scan_text":"2026-10-04 07:13","note":"內建瀏覽器讀 Google Flights(TWD 含稅),新抽日期窗 2027/3/10–16(另 3/9–13)與 2026/11/18–23、單程 12/9,未掃滿 180 天;東京日期網格(3/6–3/16 區段)3–7 晚最低為 3/10–16;來回最低:大阪 TPE-KIX 8,084(Peach)、東京 TPE-NRT 8,857(Peach)、岡山 10,637(虎航)、福岡 11,634(虎航)、函館 11,973(虎航,11月)、札幌 12,658(KHH 捷星轉機;直飛 TPE 14,417 虎航)、仙台 15,162(韓亞轉機;直飛 17,544 星宇);單程大阪 3,513(捷星)為本次最便宜;反向票日期未設定(ArtifactData 無 reverse_trips 文件、本機檔四日期皆空)故跳過。","has_meta":true,"promos":[],"blocked":[],"no_route":[{"origin":"TSA","dest":"NRT"},{"origin":"TSA","dest":"KIX"},{"origin":"TSA","dest":"FUK"},{"origin":"TSA","dest":"HKD"},{"origin":"TSA","dest":"CTS"},{"origin":"TSA","dest":"SDJ"},{"origin":"TSA","dest":"OKJ"},{"origin":"RMQ","dest":"HND"},{"origin":"RMQ","dest":"FUK"}]},"rows":[{"city":"東京","trip":"oneway","origin":"TPE","dest":"HND","airline":"Peach","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":5060,"currency":"TWD","price_text":"NT$ 5,060","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20TYO%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Peach","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":8857,"currency":"TWD","price_text":"NT$ 8,857","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-09","depart_text":"2027-03-09 (二)","return":"2027-03-13","return_text":"2027-03-13 (六)","nonstop":true,"price":9163,"currency":"TWD","price_text":"NT$ 9,163","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-09%20through%202027-03-13&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":9200,"currency":"TWD","price_text":"NT$ 9,200","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Scoot","atype":"lcc","fsc":[],"depart":"2027-03-09","depart_text":"2027-03-09 (二)","return":"2027-03-13","return_text":"2027-03-13 (六)","nonstop":true,"price":9485,"currency":"TWD","price_text":"NT$ 9,485","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-09%20through%202027-03-13&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"KHH","dest":"NRT","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":9683,"currency":"TWD","price_text":"NT$ 9,683","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":9916,"currency":"TWD","price_text":"NT$ 9,916","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"KHH","dest":"NRT","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":11259,"currency":"TWD","price_text":"NT$ 11,259","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"RMQ","dest":"NRT","airline":"HK Express","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":13027,"currency":"TWD","price_text":"NT$ 13,027","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20RMQ%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TSA","dest":"HND","airline":"ANA (Air Japan)","atype":"fsc","fsc":["NH"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":16078,"currency":"TWD","price_text":"NT$ 16,078","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HND%20from%20TSA%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TSA","dest":"HND","airline":"China Airlines","atype":"fsc","fsc":["CI"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":17085,"currency":"TWD","price_text":"NT$ 17,085","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HND%20from%20TSA%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"RMQ","dest":"NRT","airline":"StarLux","atype":"fsc","fsc":["JX"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":24378,"currency":"TWD","price_text":"NT$ 24,378","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20RMQ%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"oneway","origin":"TPE","dest":"KIX","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":3513,"currency":"TWD","price_text":"NT$ 3,513","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20OSA%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"TPE","dest":"KIX","airline":"Peach","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":8084,"currency":"TWD","price_text":"NT$ 8,084","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"TPE","dest":"KIX","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":8557,"currency":"TWD","price_text":"NT$ 8,557","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"TPE","dest":"KIX","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":8673,"currency":"TWD","price_text":"NT$ 8,673","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"KHH","dest":"KIX","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":10628,"currency":"TWD","price_text":"NT$ 10,628","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"KHH","dest":"KIX","airline":"Peach","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":10669,"currency":"TWD","price_text":"NT$ 10,669","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"RMQ","dest":"KIX","airline":"Jin Air","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":12435,"currency":"TWD","price_text":"NT$ 12,435","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20RMQ%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"RMQ","dest":"KIX","airline":"HK Express","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":13127,"currency":"TWD","price_text":"NT$ 13,127","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20RMQ%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"oneway","origin":"TPE","dest":"CTS","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":false,"price":7932,"currency":"TWD","price_text":"NT$ 7,932","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20CTS%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"KHH","dest":"CTS","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":12658,"currency":"TWD","price_text":"NT$ 12,658","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":14417,"currency":"TWD","price_text":"NT$ 14,417","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Thai AirAsia","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":17042,"currency":"TWD","price_text":"NT$ 17,042","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Thai AirAsia","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":17816,"currency":"TWD","price_text":"NT$ 17,816","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Scoot","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":19421,"currency":"TWD","price_text":"NT$ 19,421","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"KHH","dest":"CTS","airline":"Thai Lion Air","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":22986,"currency":"TWD","price_text":"NT$ 22,986","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"oneway","origin":"TPE","dest":"SDJ","airline":"StarLux","atype":"fsc","fsc":["JX"],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":11858,"currency":"TWD","price_text":"NT$ 11,858","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20SDJ%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"roundtrip","origin":"TPE","dest":"SDJ","airline":"Asiana Airlines","atype":"fsc","fsc":["NH","OZ"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":15162,"currency":"TWD","price_text":"NT$ 15,162","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20SDJ%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"roundtrip","origin":"TPE","dest":"SDJ","airline":"StarLux","atype":"fsc","fsc":["JX"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":17544,"currency":"TWD","price_text":"NT$ 17,544","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20SDJ%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"roundtrip","origin":"TPE","dest":"SDJ","airline":"EVA Air","atype":"fsc","fsc":["BR"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":17911,"currency":"TWD","price_text":"NT$ 17,911","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20SDJ%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"roundtrip","origin":"TPE","dest":"SDJ","airline":"EVA Air","atype":"fsc","fsc":["BR"],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":22027,"currency":"TWD","price_text":"NT$ 22,027","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20SDJ%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"oneway","origin":"TPE","dest":"FUK","airline":"AirAsia","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":6440,"currency":"TWD","price_text":"NT$ 6,440","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20FUK%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":11634,"currency":"TWD","price_text":"NT$ 11,634","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":12134,"currency":"TWD","price_text":"NT$ 12,134","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"AirAsia","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":12290,"currency":"TWD","price_text":"NT$ 12,290","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"KHH","dest":"FUK","airline":"HK Express","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":12508,"currency":"TWD","price_text":"NT$ 12,508","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"Jin Air","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":false,"price":12697,"currency":"TWD","price_text":"NT$ 12,697","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"KHH","dest":"FUK","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":14334,"currency":"TWD","price_text":"NT$ 14,334","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"函館","trip":"oneway","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":10899,"currency":"TWD","price_text":"NT$ 10,899","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20HKD%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":11973,"currency":"TWD","price_text":"NT$ 11,973","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":15973,"currency":"TWD","price_text":"NT$ 15,973","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"StarLux","atype":"fsc","fsc":["JX"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":21245,"currency":"TWD","price_text":"NT$ 21,245","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"岡山","trip":"oneway","origin":"TPE","dest":"OKJ","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":4899,"currency":"TWD","price_text":"NT$ 4,899","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20OKJ%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"岡山","trip":"roundtrip","origin":"TPE","dest":"OKJ","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":10637,"currency":"TWD","price_text":"NT$ 10,637","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OKJ%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0}],"hist":[{"t":1790843044000,"label":"2026-10-01 16:24","m":{"東京":{"TPE|y|lcc":7003,"TPE|y|unknown":7575,"KHH|y|lcc":8348,"TSA|y|fsc":12172,"RMQ|y|fsc":14112},"福岡":{"TPE|y|lcc":7151,"KHH|y|lcc":7326},"函館":{"TPE|n|lcc":10509,"TPE|y|lcc":10657,"RMQ|n|mix":15538,"KHH|n|lcc":15691},"札幌":{"KHH|n|mix":10137,"TPE|y|unknown":10168,"TPE|y|lcc":10232,"RMQ|y|fsc":20695}}},{"t":1790901907000,"label":"2026-10-02 08:45","m":{"東京":{"TPE|y|lcc":7979,"KHH|y|lcc":9998,"TSA|y|fsc":16747},"福岡":{"TPE|n|unknown":9287,"TPE|y|lcc":9835,"KHH|n|unknown":11019},"函館":{"TPE|y|lcc":12573,"TPE|y|fsc":17404,"KHH|n|fsc":23728},"札幌":{"TPE|n|lcc":9519,"TPE|y|lcc":9633,"RMQ|n|lcc":12066,"KHH|n|unknown":13078}}},{"t":1790986540000,"label":"2026-10-03 08:15","m":{"東京":{"TPE|y|lcc":8555,"KHH|y|lcc":9986,"TPE|n|lcc":10613,"RMQ|n|lcc":12494,"TSA|y|fsc":17078},"大阪":{"TPE|y|lcc":8557,"KHH|y|lcc":10042,"RMQ|n|lcc":12568},"札幌":{"TPE|y|lcc":9962,"TPE|n|lcc":12914,"KHH|n|lcc":13001,"RMQ|n|lcc":13120},"仙台":{"TPE|n|fsc":14833,"TPE|y|lcc":15221},"福岡":{"TPE|y|lcc":11491,"KHH|y|lcc":12288},"函館":{"TPE|y|lcc":12573,"TPE|y|fsc":17407},"岡山":{"TPE|y|lcc":9237}}},{"t":1791036910000,"label":"2026-10-03 22:15","m":{"東京":{"TPE|y|lcc":9245,"KHH|y|lcc":9471,"TSA|y|fsc":16078},"大阪":{"TPE|y|lcc":9024,"KHH|y|lcc":12068},"札幌":{"TPE|y|lcc":11394,"KHH|n|lcc":11900,"KHH|y|lcc":21154},"仙台":{"TPE|y|lcc":12869,"TPE|y|fsc":18450},"福岡":{"TPE|y|lcc":11953,"TPE|y|fsc":14794,"KHH|n|lcc":10679},"函館":{"TPE|y|lcc":13373,"TPE|n|fsc":20208,"TPE|y|fsc":21775},"岡山":{"TPE|y|lcc":10237,"TPE|n|fsc":16747}}},{"t":1791069214000,"label":"2026-10-04 07:13","m":{"東京":{"TPE|y|lcc":8857,"KHH|y|lcc":9683,"TSA|y|fsc":16078,"RMQ|n|lcc":13027,"RMQ|y|fsc":24378},"大阪":{"TPE|y|lcc":8084,"KHH|y|lcc":10628,"RMQ|n|lcc":12435},"札幌":{"TPE|y|lcc":14417,"KHH|n|lcc":12658,"KHH|y|lcc":22986},"仙台":{"TPE|n|fsc":15162,"TPE|y|fsc":17544},"福岡":{"TPE|y|lcc":11634,"TPE|n|lcc":12697,"KHH|n|lcc":12508,"KHH|y|lcc":14334},"函館":{"TPE|y|lcc":11973,"TPE|y|fsc":21245},"岡山":{"TPE|y|lcc":10637}}}],"price_max":24378,"rev_cfg":{"legs":[{"depart":"","return":""},{"depart":"","return":""}]}}</script>
+<script type="application/json" id="flight-data">{"generated_at":"2026-10-04 08:16","scan_count":5,"skipped":0,"up_threshold_pct":15,"reload_min":30,"origins":["TPE","TSA","KHH","RMQ"],"atypes":[{"k":"lcc","t":"廉航"},{"k":"fsc","t":"傳統航空"}],"fsc_list":[{"k":"CI","t":"中華航空"},{"k":"BR","t":"長榮航空"},{"k":"JX","t":"星宇航空"},{"k":"JL","t":"日本航空"},{"k":"NH","t":"全日空"},{"k":"CX","t":"國泰航空"},{"k":"AE","t":"華信航空"},{"k":"UA","t":"聯合航空"},{"k":"KE","t":"大韓航空"},{"k":"OZ","t":"韓亞航空"},{"k":"TG","t":"泰國航空"},{"k":"HD","t":"北海道國際"}],"cities":[{"name":"東京","airports":"NRT / HND","code":"TYO","color":1},{"name":"大阪","airports":"KIX / ITM","code":"OSA","color":2},{"name":"札幌","airports":"CTS","code":"CTS","color":3},{"name":"仙台","airports":"SDJ","code":"SDJ","color":4},{"name":"福岡","airports":"FUK","code":"FUK","color":5},{"name":"函館","airports":"HKD","code":"HKD","color":6},{"name":"岡山","airports":"OKJ","code":"OKJ","color":7}],"latest":{"t":1791069214000,"scan_text":"2026-10-04 07:13","note":"內建瀏覽器讀 Google Flights(TWD 含稅),新抽日期窗 2027/3/10–16(另 3/9–13)與 2026/11/18–23、單程 12/9,未掃滿 180 天;東京日期網格(3/6–3/16 區段)3–7 晚最低為 3/10–16;來回最低:大阪 TPE-KIX 8,084(Peach)、東京 TPE-NRT 8,857(Peach)、岡山 10,637(虎航)、福岡 11,634(虎航)、函館 11,973(虎航,11月)、札幌 12,658(KHH 捷星轉機;直飛 TPE 14,417 虎航)、仙台 15,162(韓亞轉機;直飛 17,544 星宇);單程大阪 3,513(捷星)為本次最便宜;反向票日期未設定(ArtifactData 無 reverse_trips 文件、本機檔四日期皆空)故跳過。","has_meta":true,"promos":[],"blocked":[],"no_route":[{"origin":"TSA","dest":"NRT"},{"origin":"TSA","dest":"KIX"},{"origin":"TSA","dest":"FUK"},{"origin":"TSA","dest":"HKD"},{"origin":"TSA","dest":"CTS"},{"origin":"TSA","dest":"SDJ"},{"origin":"TSA","dest":"OKJ"},{"origin":"RMQ","dest":"HND"},{"origin":"RMQ","dest":"FUK"}]},"rows":[{"city":"東京","trip":"oneway","origin":"TPE","dest":"HND","airline":"Peach","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":5060,"currency":"TWD","price_text":"NT$ 5,060","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20TYO%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Peach","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":8857,"currency":"TWD","price_text":"NT$ 8,857","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-09","depart_text":"2027-03-09 (二)","return":"2027-03-13","return_text":"2027-03-13 (六)","nonstop":true,"price":9163,"currency":"TWD","price_text":"NT$ 9,163","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-09%20through%202027-03-13&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":9200,"currency":"TWD","price_text":"NT$ 9,200","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Scoot","atype":"lcc","fsc":[],"depart":"2027-03-09","depart_text":"2027-03-09 (二)","return":"2027-03-13","return_text":"2027-03-13 (六)","nonstop":true,"price":9485,"currency":"TWD","price_text":"NT$ 9,485","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-09%20through%202027-03-13&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"KHH","dest":"NRT","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":9683,"currency":"TWD","price_text":"NT$ 9,683","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TPE","dest":"NRT","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":9916,"currency":"TWD","price_text":"NT$ 9,916","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20NRT%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"KHH","dest":"NRT","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":11259,"currency":"TWD","price_text":"NT$ 11,259","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"RMQ","dest":"NRT","airline":"HK Express","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":13027,"currency":"TWD","price_text":"NT$ 13,027","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20RMQ%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TSA","dest":"HND","airline":"ANA (Air Japan)","atype":"fsc","fsc":["NH"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":16078,"currency":"TWD","price_text":"NT$ 16,078","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HND%20from%20TSA%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"TSA","dest":"HND","airline":"China Airlines","atype":"fsc","fsc":["CI"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":17085,"currency":"TWD","price_text":"NT$ 17,085","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HND%20from%20TSA%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"東京","trip":"roundtrip","origin":"RMQ","dest":"NRT","airline":"StarLux","atype":"fsc","fsc":["JX"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":24378,"currency":"TWD","price_text":"NT$ 24,378","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20TYO%20from%20RMQ%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"oneway","origin":"TPE","dest":"KIX","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":3513,"currency":"TWD","price_text":"NT$ 3,513","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20OSA%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"TPE","dest":"KIX","airline":"Peach","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":8084,"currency":"TWD","price_text":"NT$ 8,084","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"TPE","dest":"KIX","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":8557,"currency":"TWD","price_text":"NT$ 8,557","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"TPE","dest":"KIX","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":8673,"currency":"TWD","price_text":"NT$ 8,673","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"KHH","dest":"KIX","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":10628,"currency":"TWD","price_text":"NT$ 10,628","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"KHH","dest":"KIX","airline":"Peach","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":10669,"currency":"TWD","price_text":"NT$ 10,669","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"RMQ","dest":"KIX","airline":"Jin Air","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":12435,"currency":"TWD","price_text":"NT$ 12,435","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20RMQ%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"大阪","trip":"roundtrip","origin":"RMQ","dest":"KIX","airline":"HK Express","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":13127,"currency":"TWD","price_text":"NT$ 13,127","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OSA%20from%20RMQ%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"oneway","origin":"TPE","dest":"CTS","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":false,"price":7932,"currency":"TWD","price_text":"NT$ 7,932","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20CTS%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"KHH","dest":"CTS","airline":"Jetstar Japan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":12658,"currency":"TWD","price_text":"NT$ 12,658","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":14417,"currency":"TWD","price_text":"NT$ 14,417","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Thai AirAsia","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":17042,"currency":"TWD","price_text":"NT$ 17,042","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Thai AirAsia","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":17816,"currency":"TWD","price_text":"NT$ 17,816","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"TPE","dest":"CTS","airline":"Scoot","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":19421,"currency":"TWD","price_text":"NT$ 19,421","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"札幌","trip":"roundtrip","origin":"KHH","dest":"CTS","airline":"Thai Lion Air","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":22986,"currency":"TWD","price_text":"NT$ 22,986","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20CTS%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"oneway","origin":"TPE","dest":"SDJ","airline":"StarLux","atype":"fsc","fsc":["JX"],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":11858,"currency":"TWD","price_text":"NT$ 11,858","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20SDJ%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"roundtrip","origin":"TPE","dest":"SDJ","airline":"Asiana Airlines","atype":"fsc","fsc":["NH","OZ"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":15162,"currency":"TWD","price_text":"NT$ 15,162","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20SDJ%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"roundtrip","origin":"TPE","dest":"SDJ","airline":"StarLux","atype":"fsc","fsc":["JX"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":17544,"currency":"TWD","price_text":"NT$ 17,544","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20SDJ%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"roundtrip","origin":"TPE","dest":"SDJ","airline":"EVA Air","atype":"fsc","fsc":["BR"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":17911,"currency":"TWD","price_text":"NT$ 17,911","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20SDJ%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"仙台","trip":"roundtrip","origin":"TPE","dest":"SDJ","airline":"EVA Air","atype":"fsc","fsc":["BR"],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":22027,"currency":"TWD","price_text":"NT$ 22,027","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20SDJ%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"oneway","origin":"TPE","dest":"FUK","airline":"AirAsia","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":6440,"currency":"TWD","price_text":"NT$ 6,440","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20FUK%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":11634,"currency":"TWD","price_text":"NT$ 11,634","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":12134,"currency":"TWD","price_text":"NT$ 12,134","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"AirAsia","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":12290,"currency":"TWD","price_text":"NT$ 12,290","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"KHH","dest":"FUK","airline":"HK Express","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":false,"price":12508,"currency":"TWD","price_text":"NT$ 12,508","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"TPE","dest":"FUK","airline":"Jin Air","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":false,"price":12697,"currency":"TWD","price_text":"NT$ 12,697","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"福岡","trip":"roundtrip","origin":"KHH","dest":"FUK","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":14334,"currency":"TWD","price_text":"NT$ 14,334","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20FUK%20from%20KHH%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"函館","trip":"oneway","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":10899,"currency":"TWD","price_text":"NT$ 10,899","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20HKD%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-11-18","depart_text":"2026-11-18 (三)","return":"2026-11-23","return_text":"2026-11-23 (一)","nonstop":true,"price":11973,"currency":"TWD","price_text":"NT$ 11,973","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202026-11-18%20through%202026-11-23&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":15973,"currency":"TWD","price_text":"NT$ 15,973","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"函館","trip":"roundtrip","origin":"TPE","dest":"HKD","airline":"StarLux","atype":"fsc","fsc":["JX"],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":21245,"currency":"TWD","price_text":"NT$ 21,245","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20HKD%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"岡山","trip":"oneway","origin":"TPE","dest":"OKJ","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2026-12-09","depart_text":"2026-12-09 (三)","return":"","return_text":"—","nonstop":true,"price":4899,"currency":"TWD","price_text":"NT$ 4,899","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=One%20way%20flights%20to%20OKJ%20from%20TPE%20on%202026-12-09&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0},{"city":"岡山","trip":"roundtrip","origin":"TPE","dest":"OKJ","airline":"Tigerair Taiwan","atype":"lcc","fsc":[],"depart":"2027-03-10","depart_text":"2027-03-10 (三)","return":"2027-03-16","return_text":"2027-03-16 (二)","nonstop":true,"price":10637,"currency":"TWD","price_text":"NT$ 10,637","source":"Google Flights","source_url":"https://www.google.com/travel/flights?q=Flights%20to%20OKJ%20from%20TPE%20on%202027-03-10%20through%202027-03-16&curr=TWD&hl=zh-TW&gl=TW","scan_text":"2026-10-04 07:13","scan_key":1791069214.0}],"hist":[{"t":1790843044000,"label":"2026-10-01 16:24","m":{"東京":{"TPE|y|lcc":7003,"TPE|y|unknown":7575,"KHH|y|lcc":8348,"TSA|y|fsc":12172,"RMQ|y|fsc":14112},"福岡":{"TPE|y|lcc":7151,"KHH|y|lcc":7326},"函館":{"TPE|n|lcc":10509,"TPE|y|lcc":10657,"RMQ|n|mix":15538,"KHH|n|lcc":15691},"札幌":{"KHH|n|mix":10137,"TPE|y|unknown":10168,"TPE|y|lcc":10232,"RMQ|y|fsc":20695}}},{"t":1790901907000,"label":"2026-10-02 08:45","m":{"東京":{"TPE|y|lcc":7979,"KHH|y|lcc":9998,"TSA|y|fsc":16747},"福岡":{"TPE|n|unknown":9287,"TPE|y|lcc":9835,"KHH|n|unknown":11019},"函館":{"TPE|y|lcc":12573,"TPE|y|fsc":17404,"KHH|n|fsc":23728},"札幌":{"TPE|n|lcc":9519,"TPE|y|lcc":9633,"RMQ|n|lcc":12066,"KHH|n|unknown":13078}}},{"t":1790986540000,"label":"2026-10-03 08:15","m":{"東京":{"TPE|y|lcc":8555,"KHH|y|lcc":9986,"TPE|n|lcc":10613,"RMQ|n|lcc":12494,"TSA|y|fsc":17078},"大阪":{"TPE|y|lcc":8557,"KHH|y|lcc":10042,"RMQ|n|lcc":12568},"札幌":{"TPE|y|lcc":9962,"TPE|n|lcc":12914,"KHH|n|lcc":13001,"RMQ|n|lcc":13120},"仙台":{"TPE|n|fsc":14833,"TPE|y|lcc":15221},"福岡":{"TPE|y|lcc":11491,"KHH|y|lcc":12288},"函館":{"TPE|y|lcc":12573,"TPE|y|fsc":17407},"岡山":{"TPE|y|lcc":9237}}},{"t":1791036910000,"label":"2026-10-03 22:15","m":{"東京":{"TPE|y|lcc":9245,"KHH|y|lcc":9471,"TSA|y|fsc":16078},"大阪":{"TPE|y|lcc":9024,"KHH|y|lcc":12068},"札幌":{"TPE|y|lcc":11394,"KHH|n|lcc":11900,"KHH|y|lcc":21154},"仙台":{"TPE|y|lcc":12869,"TPE|y|fsc":18450},"福岡":{"TPE|y|lcc":11953,"TPE|y|fsc":14794,"KHH|n|lcc":10679},"函館":{"TPE|y|lcc":13373,"TPE|n|fsc":20208,"TPE|y|fsc":21775},"岡山":{"TPE|y|lcc":10237,"TPE|n|fsc":16747}}},{"t":1791069214000,"label":"2026-10-04 07:13","m":{"東京":{"TPE|y|lcc":8857,"KHH|y|lcc":9683,"TSA|y|fsc":16078,"RMQ|n|lcc":13027,"RMQ|y|fsc":24378},"大阪":{"TPE|y|lcc":8084,"KHH|y|lcc":10628,"RMQ|n|lcc":12435},"札幌":{"TPE|y|lcc":14417,"KHH|n|lcc":12658,"KHH|y|lcc":22986},"仙台":{"TPE|n|fsc":15162,"TPE|y|fsc":17544},"福岡":{"TPE|y|lcc":11634,"TPE|n|lcc":12697,"KHH|n|lcc":12508,"KHH|y|lcc":14334},"函館":{"TPE|y|lcc":11973,"TPE|y|fsc":21245},"岡山":{"TPE|y|lcc":10637}}}],"price_max":24378,"rev_cfg":{"legs":[{"depart":"","return":""},{"depart":"","return":""}]}}</script>
 <script>
 (function(){
 'use strict';
@@ -172,9 +246,15 @@ var SVGNS = 'http://www.w3.org/2000/svg';
 var STORE_KEY = 'jpflights.filters.v1';
 var WD = '日一二三四五六';
 var D, F, KNOWN, SLIDER_MAX, sortStates = {};
-var activeTab = null;
-try { activeTab = localStorage.getItem('jpflights.filters.v1.tab'); } catch (e) {}
-var ATYPE_TEXT ={lcc: '廉航', fsc: '傳統', mix: '混搭', unknown: '未分類'};
+var UI = {};            // <details> 的開合狀態(只記在這次瀏覽)
+var openCity = null;    // 明細展開的城市:null = 預設最便宜那個,'' = 使用者收起
+var advOpen = false;
+try { advOpen = localStorage.getItem(STORE_KEY + '.adv') === '1'; } catch (e) {}
+var ATYPE_TEXT = {lcc: '廉航', fsc: '傳統', mix: '混搭', unknown: '未分類'};
+var AP = {TPE:'桃園', TSA:'松山', KHH:'高雄', RMQ:'台中', NRT:'成田', HND:'羽田', KIX:'關西', ITM:'伊丹', UKB:'神戶',
+          CTS:'新千歲', SDJ:'仙台', FUK:'福岡', HKD:'函館', OKJ:'岡山', TYO:'東京', OSA:'大阪'};
+function apName(code){ code = String(code || '').trim(); return code ? (AP[code] ? code + ' ' + AP[code] : code) : '—'; }
+function apList(s){ return String(s || '').split('/').map(function(x){ return apName(x); }).join(' / '); }
 
 /* ---------- DOM 小工具 ---------- */
 function el(tag, cls, text){
@@ -209,6 +289,15 @@ function fmtNum(n){ return Number.isInteger(n) ? n.toLocaleString('en-US') : n.t
 function fmtNT(n){ return 'NT$ ' + Math.round(n).toLocaleString('en-US'); }
 function nonstopText(v){ return v === true ? '直飛' : (v === false ? '轉機' : '—'); }
 function cityInfo(name){ for (var i = 0; i < D.cities.length; i++) if (D.cities[i].name === name) return D.cities[i]; return null; }
+function badgeEl(b){ var x = el('span', 'badge b-' + b.type, b.text); x.setAttribute('data-badge', b.type); return x; }
+/* 收合區塊:預設開合由 defOpen 決定,使用者點過就記住(整頁重繪時保留) */
+function detailsBox(id, defOpen, cls){
+  var d = el('details', cls || null); d.setAttribute('data-ui', id);
+  d.open = (UI[id] === undefined) ? !!defOpen : UI[id];
+  var s = el('summary'); add(d, s);
+  s.addEventListener('click', function(){ UI[id] = !d.open; });
+  return {d: d, s: s};
+}
 
 /* ---------- 訂票連結 ---------- */
 function ymd(iso){ return (iso || '').slice(0, 10); }
@@ -234,6 +323,7 @@ function shortDay(iso){
   var wd = new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay();
   return (+p[1]) + '/' + (+p[2]) + '(' + WD.charAt(wd) + ')';
 }
+function dateRange(r){ return shortDay(r.depart) + (r.trip === 'roundtrip' && r['return'] ? '–' + shortDay(r['return']) : ' 單程'); }
 function compactPrice(r){ return r.currency === 'TWD' ? 'NT$' + fmtNum(r.price) : r.currency + ' ' + fmtNum(r.price); }
 function copyLine(r){
   var dates = shortDay(r.depart) + (r.trip === 'roundtrip' && r['return'] ? '–' + shortDay(r['return']) : ' 單程');
@@ -272,16 +362,21 @@ function copyText(text){
   } catch (e) {}
   copyFallback(text);
 }
+function copyBtn(r, cls, text){
+  var c = el('button', cls, text);
+  c.type = 'button';
+  c.setAttribute('data-copy', copyLine(r));
+  c.title = '複製一行文字:' + c.getAttribute('data-copy');
+  c.addEventListener('click', function(){ copyText(c.getAttribute('data-copy')); });
+  return c;
+}
+/* 明細表用的小按鈕 */
 function actions(r){
   var box = el('span', 'acts');
   var g = gfUrl(r), k = ssUrl(r);
   if (g) add(box, extLink(g, 'Google Flights', 'bk bk-gf'));
   if (k) add(box, extLink(k, 'Skyscanner', 'bk bk-ss'));
-  var c = el('button', 'bk bk-copy', '複製');
-  c.type = 'button';
-  c.setAttribute('data-copy', copyLine(r));
-  c.addEventListener('click', function(){ copyText(c.getAttribute('data-copy')); });
-  add(box, c);
+  add(box, copyBtn(r, 'bk bk-copy', '複製'));
   return box;
 }
 
@@ -371,100 +466,121 @@ function computeCity(c){
       }
     }
   }
-  var table = rt.slice(0, 3).map(function(r, i){ return extend(r, {rank_sort: i + 1, rank_text: String(i + 1)}); });
-  if (ow.length) table.push(extend(ow[0], {rank_sort: 4, rank_text: '單程最低'}));
+  // 明細:符合篩選的全部來回(由便宜到貴)+ 單程最低一筆
+  var table = rt.map(function(r, i){ return extend(r, {rank_sort: i + 1}); });
+  if (ow.length) table.push(extend(ow[0], {rank_sort: rt.length + 1}));
   st.table = table;
   st.series = D.hist.map(function(e){ var v = scanMin(e, c.name); return v === null ? null : {t: e.t, label: e.label, price: v}; })
     .filter(function(p){ return p !== null; });
   return st;
 }
 
-/* ---------- 篩選列 ---------- */
+/* ---------- 篩選列(常用一排 + 進階面板) ---------- */
 function budgetText(){ return F.budget === null ? '不限' : fmtNT(F.budget) + ' 以內'; }
+function setChip(b, on){ b.className = b.className.replace(/\bon\b/g, '').replace(/\s+/g, ' ').trim() + (on ? ' on' : ''); b.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+function chip(text, on, extraCls, onClick){
+  var b = el('button', 'chip' + (extraCls ? ' ' + extraCls : ''), text);
+  b.type = 'button'; setChip(b, on);
+  b.addEventListener('click', function(){ onClick(b); });
+  return b;
+}
+function advCount(){
+  var n = 0;
+  if (F.cities.length !== D.cities.length) n++;
+  if (F.atypes.length !== D.atypes.length) n++;
+  if (F.fscs.length !== D.fsc_list.length) n++;
+  return n;
+}
+function updateAdvBtn(){
+  var b = document.getElementById('f-adv'); if (!b) return;
+  var n = advCount();
+  b.textContent = '進階篩選' + (n ? '(' + n + ' 項)' : '') + (advOpen ? ' ▾' : ' ▸');
+  b.setAttribute('aria-expanded', advOpen ? 'true' : 'false');
+  b.className = 'pbtn' + (n ? ' hot' : '');
+}
 function buildFilterBar(hasData){
   var bar = clear(document.getElementById('fbar'));
-  var w = el('div', 'wrap'); add(bar, w);
-  if (hasData){
-    var g1 = el('div', 'fgroup'); add(g1, el('span', 'lbl', '出發機場'));
-    D.origins.forEach(function(o){
+  if (!hasData){ bar.style.display = 'none'; return; }
+  bar.style.display = '';
+  var row = el('div', 'wrap frow'); add(bar, row);
+  // 出發機場
+  var g1 = el('div', 'chips'); add(g1, el('span', 'lbl', '出發'));
+  D.origins.forEach(function(o){
+    var b = chip(apName(o), F.origins.indexOf(o) >= 0, 'f-origin', function(btn){
+      var on = F.origins.indexOf(o) < 0;
+      F.origins = D.origins.filter(function(x){ return x === o ? on : F.origins.indexOf(x) >= 0; });
+      setChip(btn, on); changed();
+    });
+    b.setAttribute('data-origin', o);
+    add(g1, b);
+  });
+  // 只看直飛
+  var ns = chip('只看直飛', F.nonstop, null, function(btn){ F.nonstop = !F.nonstop; setChip(btn, F.nonstop); changed(); });
+  ns.id = 'f-nonstop';
+  // 預算上限
+  var g3 = el('div', 'budget'); add(g3, el('span', 'lbl', '預算上限'));
+  var rg = el('input'); rg.type = 'range'; rg.id = 'f-budget-range'; rg.min = 0; rg.max = SLIDER_MAX; rg.step = 500;
+  rg.value = F.budget === null ? SLIDER_MAX : Math.min(F.budget, SLIDER_MAX);
+  rg.title = '拉到最右 = 不限'; rg.setAttribute('aria-label', '預算上限(拉到最右 = 不限)');
+  var nb = el('input'); nb.type = 'number'; nb.id = 'f-budget'; nb.min = 0; nb.step = 500; nb.placeholder = '不限';
+  nb.setAttribute('aria-label', '預算上限(台幣)');
+  nb.value = F.budget === null ? '' : F.budget;
+  rg.addEventListener('input', function(){
+    var v = +rg.value;
+    F.budget = v >= SLIDER_MAX ? null : (v > 0 ? v : null);
+    nb.value = F.budget === null ? '' : F.budget; changed();
+  });
+  nb.addEventListener('input', function(){
+    var v = parseFloat(nb.value);
+    F.budget = (isFinite(v) && v > 0) ? v : null;
+    rg.value = F.budget === null ? SLIDER_MAX : Math.min(F.budget, SLIDER_MAX);
+    changed();
+  });
+  add(g3, rg, nb);
+  // 進階、重設
+  var ab = el('button', 'pbtn'); ab.type = 'button'; ab.id = 'f-adv'; ab.setAttribute('aria-controls', 'f-adv-panel');
+  var rs = el('button', 'pbtn', '重設'); rs.type = 'button'; rs.id = 'f-reset'; rs.title = '所有篩選回到預設(全部勾選、不限預算)';
+  rs.addEventListener('click', function(){ F = defaults(); saveFilters(); buildFilterBar(true); renderAll(); });
+  add(row, g1, ns, g3, el('div', 'fspacer'), ab, rs);
+
+  // 進階面板:城市、廉航/傳統、傳統航空逐家
+  var adv = el('div', 'wrap adv'); adv.id = 'f-adv-panel'; adv.hidden = !advOpen; add(bar, adv);
+  ab.addEventListener('click', function(){
+    advOpen = !advOpen; adv.hidden = !advOpen;
+    try { localStorage.setItem(STORE_KEY + '.adv', advOpen ? '1' : '0'); } catch (e) {}
+    updateAdvBtn();
+  });
+  function checkGroup(label, cls, items, field){
+    var g = el('div', 'fgroup'); add(g, el('span', 'lbl', label));
+    items.forEach(function(it){
       var lb = el('label'), cb = el('input');
-      cb.type = 'checkbox'; cb.value = o; cb.className = 'f-origin';
-      cb.checked = F.origins.indexOf(o) >= 0;
+      cb.type = 'checkbox'; cb.value = it.k; cb.className = cls;
+      cb.checked = F[field].indexOf(it.k) >= 0;
       cb.addEventListener('change', function(){
-        F.origins = D.origins.filter(function(x){
-          var b = bar.querySelector('input.f-origin[value="' + x + '"]'); return b && b.checked;
+        F[field] = items.map(function(x){ return x.k; }).filter(function(k){
+          var b = adv.querySelector('input.' + cls + '[value="' + k + '"]'); return b && b.checked;
         });
         changed();
       });
-      add(lb, cb, o); add(g1, lb);
+      add(lb, cb, it.t); add(g, lb);
     });
-    var g2 = el('div', 'fgroup');
-    var lb2 = el('label'), ns = el('input'); ns.type = 'checkbox'; ns.id = 'f-nonstop'; ns.checked = F.nonstop;
-    ns.addEventListener('change', function(){ F.nonstop = ns.checked; changed(); });
-    add(lb2, ns, '只看直飛'); add(g2, lb2);
-    var g3 = el('div', 'fgroup'); add(g3, el('span', 'lbl', '預算上限'));
-    var rg = el('input'); rg.type = 'range'; rg.id = 'f-budget-range'; rg.min = 0; rg.max = SLIDER_MAX; rg.step = 500;
-    rg.value = F.budget === null ? SLIDER_MAX : Math.min(F.budget, SLIDER_MAX);
-    var nb = el('input'); nb.type = 'number'; nb.id = 'f-budget'; nb.min = 0; nb.step = 500; nb.placeholder = '不限';
-    nb.value = F.budget === null ? '' : F.budget;
-    rg.title = '拉到最右 = 不限';
-    rg.addEventListener('input', function(){
-      var v = +rg.value;
-      F.budget = v >= SLIDER_MAX ? null : (v > 0 ? v : null);
-      nb.value = F.budget === null ? '' : F.budget; changed();
-    });
-    nb.addEventListener('input', function(){
-      var v = parseFloat(nb.value);
-      F.budget = (isFinite(v) && v > 0) ? v : null;
-      rg.value = F.budget === null ? SLIDER_MAX : Math.min(F.budget, SLIDER_MAX);
-      changed();
-    });
-    add(g3, rg, nb);
-    var rs = el('button', 'pbtn', '重設篩選'); rs.type = 'button'; rs.id = 'f-reset';
-    rs.addEventListener('click', function(){ F = defaults(); saveFilters(); buildFilterBar(true); renderAll(); });
-    add(w, g1, g2, g3, rs);
-    // 第二列:城市、航空類型
-    var w2 = el('div', 'wrap frow2'); add(bar, w2);
-    function checkGroup(label, cls, items, field){
-      var g = el('div', 'fgroup'); add(g, el('span', 'lbl', label));
-      items.forEach(function(it){
-        var lb = el('label'), cb = el('input');
-        cb.type = 'checkbox'; cb.value = it.k; cb.className = cls;
-        cb.checked = F[field].indexOf(it.k) >= 0;
-        cb.addEventListener('change', function(){
-          F[field] = items.map(function(x){ return x.k; }).filter(function(k){
-            var b = bar.querySelector('input.' + cls + '[value="' + k + '"]'); return b && b.checked;
-          });
-          changed();
-        });
-        add(lb, cb, it.t); add(g, lb);
-      });
-      return g;
-    }
-    add(w2,
-      checkGroup('城市', 'f-city', D.cities.map(function(c){ return {k: c.name, t: c.name}; }), 'cities'),
-      el('span', 'fsep'),
-      checkGroup('航空公司', 'f-atype', D.atypes, 'atypes'));
-    // 第三列:傳統航空逐家勾選
-    var w3 = el('div', 'wrap frow2'); add(bar, w3);
-    add(w3, checkGroup('傳統航空', 'f-fsc', D.fsc_list, 'fscs'));
-    var allBtn = el('button', 'pbtn', '全選'); allBtn.type = 'button';
-    allBtn.addEventListener('click', function(){ F.fscs = allFscs(); saveFilters(); buildFilterBar(true); renderAll(); });
-    var noneBtn = el('button', 'pbtn', '全不選'); noneBtn.type = 'button';
-    noneBtn.addEventListener('click', function(){ F.fscs = []; saveFilters(); buildFilterBar(true); renderAll(); });
-    add(w3, allBtn, noneBtn);
+    return g;
   }
-  add(w, el('div', 'fspacer'));
-  var rl = el('div', 'reload');
-  var cd = el('b', null, ''); cd.id = 'reload-countdown';
-  var rb = el('button', 'pbtn', '立即重新整理'); rb.type = 'button'; rb.id = 'reload-now';
-  rb.addEventListener('click', function(){ location.reload(); });
-  add(rl, '自動重新整理', cd, rb);
-  add(w, rl);
+  add(adv,
+    checkGroup('城市', 'f-city', D.cities.map(function(c){ return {k: c.name, t: c.name}; }), 'cities'),
+    checkGroup('航空類型', 'f-atype', D.atypes, 'atypes'));
+  var g4 = checkGroup('傳統航空', 'f-fsc', D.fsc_list, 'fscs');
+  var allBtn = el('button', 'pbtn', '全選'); allBtn.type = 'button';
+  allBtn.addEventListener('click', function(){ F.fscs = allFscs(); saveFilters(); buildFilterBar(true); renderAll(); });
+  var noneBtn = el('button', 'pbtn', '全不選'); noneBtn.type = 'button';
+  noneBtn.addEventListener('click', function(){ F.fscs = []; saveFilters(); buildFilterBar(true); renderAll(); });
+  add(g4, allBtn, noneBtn);
+  add(adv, g4, el('div', 'fnote', '只勾廉航或只勾傳統時,混搭兩種航空、或認不出類型的報價會先藏起來;兩個都勾才全部顯示。'));
+  updateAdvBtn();
 }
-function changed(){ saveFilters(); renderAll(); }
+function changed(){ saveFilters(); updateAdvBtn(); renderAll(); }
 
-/* ---------- 自動重新整理 ---------- */
+/* ---------- 自動重新整理(倒數顯示在頁尾「資料狀況」) ---------- */
 function startReload(){
   var deadline = Date.now() + D.reload_min * 60 * 1000;
   function tick(){
@@ -477,15 +593,37 @@ function startReload(){
   tick();
 }
 
-/* ---------- 各區塊 ---------- */
-function header(){
-  var h = el('header');
+/* ---------- 頁首:一句話結論 ---------- */
+function hero(states){
+  var h = el('header', 'hero');
   add(h, el('h1', null, '日本便宜機票追蹤'));
-  var m = el('div', 'meta');
-  var last = el('span'); add(last, '最後掃描:', el('b', null, D.latest ? D.latest.scan_text : '尚未掃描'));
-  var cnt = el('span'); add(cnt, '累計掃描:', el('b', null, D.scan_count + ' 次'));
-  add(m, last, cnt, el('span', null, '頁面產生:' + D.generated_at));
-  add(h, m);
+  if (!(D.scan_count && D.latest)){
+    add(h, el('div', 'metaline', '尚未掃描 · 頁面產生 ' + D.generated_at));
+    return h;
+  }
+  var v = el('div', 'verdict'); v.id = 'verdict';
+  var best = null, bst = null;
+  states.forEach(function(st){
+    var x = st.best;
+    if (x && x.currency === 'TWD' && (!best || rankCmp(x, best) < 0)){ best = x; bst = st; }
+  });
+  if (!best){
+    add(v, el('span', 'vnone', states.length
+      ? '目前篩選條件下,最新一次掃描沒有台幣來回報價。可以放寬篩選或按「重設」。'
+      : '目前沒有勾選任何城市,請打開「進階篩選」至少勾一個。'));
+  } else {
+    v.setAttribute('data-city', best.city); v.setAttribute('data-price', String(best.price));
+    add(v, el('span', 'vk', '目前最便宜'));
+    var m = el('span', 'vmain');
+    add(m, el('span', 'vcity', best.city), el('span', 'vprice', fmtNT(best.price)), el('span', 'unit', '含稅來回 / 人'));
+    if (bst.badge && bst.badge.type === 'low') add(m, badgeEl(bst.badge));
+    add(v, m);
+    add(v, el('span', 'vinfo', dateRange(best) + ' · ' + best.airline + ' · ' + nonstopText(best.nonstop) + ' · ' + apName(best.origin) + ' 出發'));
+    var g = gfUrl(best); if (g) add(v, extLink(g, 'Google Flights 訂票', 'btn-primary'));
+  }
+  add(h, v);
+  var meta = el('div', 'metaline', '最後更新 ' + D.latest.scan_text + ' · 累計掃描 ' + D.scan_count + ' 次');
+  meta.title = '頁面產生:' + D.generated_at; add(h, meta);
   return h;
 }
 
@@ -501,68 +639,129 @@ function filterDesc(){
   return parts.length ? '目前篩選:' + parts.join(' · ') : '';
 }
 
-function cardsSection(states){
-  var sec = el('section'); sec.id = 'sec-cards';
-  add(sec, el('h2', null, '各城市最新最低來回價'));
-  add(sec, el('div', 'sub', '取最新一次掃描、目前篩選條件下的最低台幣來回含稅價;徽章跟過往掃描(同樣的出發機場／直飛條件)比較,漲 = 比上一次貴超過 ' + D.up_threshold_pct + '%。'));
-  var grid = el('div', 'cards');
-  states.forEach(function(st){
-    var c = st.city, x = st.best;
-    var card = el('div', 'card'); card.style.borderTopColor = colorVar(c.color); card.setAttribute('data-city', c.name);
-    var top = el('div', 'top'), nm = el('div');
-    add(nm, el('div', 'city', c.name), el('div', 'air', c.airports)); add(top, nm);
-    if (st.badge){ var b = el('span', 'badge b-' + st.badge.type, st.badge.text); b.setAttribute('data-badge', st.badge.type); add(top, b); }
-    add(card, top);
-    if (!x){
-      add(card, el('div', 'empty', st.overBudget ? '沒有 ' + budgetText() + ' 的來回報價。' : '目前篩選條件下,本次掃描沒有這個城市的來回報價。'));
-    } else {
-      add(card, el('div', 'price', x.price_text));
-      add(card, el('div', 'line', x.origin + ' → ' + (x.dest || '—') + '  ·  ' + x.airline));
-      add(card, el('div', 'line', '去程 ' + x.depart_text));
-      add(card, el('div', 'line', '回程 ' + x.return_text));
-      add(card, el('div', 'line', nonstopText(x.nonstop)));
-      if (st.delta !== null){
-        var d = el('div', 'line');
-        var cls = st.delta > 0 ? 'delta-up' : (st.delta < 0 ? 'delta-down' : '');
-        add(d, '較上次 ', el('span', cls, (st.delta > 0 ? '+' : '') + st.delta.toFixed(1) + '%'), el('span', 'muted', '(上次 ' + fmtNT(st.prev) + ')'));
-        add(card, d);
-      }
-      if (st.low !== null) add(card, el('div', 'muted', '過往最低 ' + fmtNT(st.low)));
-      var src = el('div', 'muted'); add(src, '來源:', extLink(x.source_url, x.source)); add(card, src);
-      var a = actions(x); add(card, a);
-    }
-    add(grid, card);
+/* ---------- 城市卡 ---------- */
+function byPrice(states){
+  return states.slice().sort(function(a, b){
+    if (!a.best && !b.best) return 0;
+    if (!a.best) return 1;
+    if (!b.best) return -1;
+    return rankCmp(a.best, b.best);
   });
+}
+function currentOpen(sorted){
+  if (openCity === '') return '';
+  for (var i = 0; i < sorted.length; i++) if (sorted[i].city.name === openCity) return openCity;
+  for (var j = 0; j < sorted.length; j++) if (sorted[j].best) return sorted[j].city.name;
+  return '';
+}
+function toggleCity(name, cur){
+  openCity = (cur === name) ? '' : name;
+  renderAll();
+  var d = document.getElementById('city-detail');
+  if (openCity && d){
+    var r = d.getBoundingClientRect();
+    if (r.top > window.innerHeight - 120 || r.top < 0){
+      try { d.scrollIntoView({behavior: 'smooth', block: 'start'}); } catch (e) { d.scrollIntoView(); }
+    }
+  }
+}
+function posBar(st){
+  var x = st.best; if (!x || x.currency !== 'TWD') return null;
+  var vals = st.series.map(function(p){ return p.price; }); vals.push(x.price);
+  var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+  var pct = hi > lo ? (x.price - lo) / (hi - lo) * 100 : 0;
+  pct = Math.max(0, Math.min(100, pct));
+  var box = el('div', 'pos'); box.setAttribute('data-pos', pct.toFixed(0));
+  box.title = '條的左端是這個城市歷次掃描(同樣篩選)的最低來回價、右端是最高;圓點是這次的價格,越靠左越便宜。';
+  var tr = el('div', 'track'), mk = el('span', 'mark'); mk.style.left = pct + '%';
+  add(tr, mk); add(box, tr);
+  var right = hi > lo ? '最高 ' + fmtNT(hi) : (st.series.length <= 1 ? '目前只有 1 次紀錄' : '歷次價格都一樣');
+  add(box, add(el('div', 'ends'), el('span', null, '歷史最低 ' + fmtNT(lo)), el('span', null, right)));
+  return box;
+}
+function cityCard(st, selected, cur){
+  var c = st.city, x = st.best;
+  var card = el('div', 'card' + (selected ? ' sel' : ''));
+  card.style.borderTopColor = colorVar(c.color); card.setAttribute('data-city', c.name);
+  card.tabIndex = 0; card.setAttribute('role', 'button'); card.setAttribute('aria-expanded', selected ? 'true' : 'false');
+  card.title = '點一下看' + c.name + '全部報價';
+  var top = el('div', 'top'), nm = el('div');
+  add(nm, el('div', 'city', c.name), el('div', 'air', apList(c.airports))); add(top, nm);
+  if (st.badge) add(top, badgeEl(st.badge));
+  add(card, top);
+  if (!x){
+    add(card, el('div', 'empty', st.overBudget ? '沒有 ' + budgetText() + ' 的來回報價。' : '目前篩選條件下,本次掃描沒有這個城市的來回報價。'));
+  } else {
+    var pr = el('div', 'pr'); add(pr, el('span', 'price', x.price_text), el('span', 'unit', '含稅來回 / 人')); add(card, pr);
+    add(card, el('div', 'line', dateRange(x) + ' · ' + x.airline + ' · ' + nonstopText(x.nonstop)));
+    add(card, el('div', 'muted', '出發 ' + apName(x.origin) + (x.dest ? ' → 抵達 ' + apName(x.dest) : '')));
+    add(card, posBar(st));
+    if (st.delta !== null){
+      var d = el('div', 'muted');
+      var cls = st.delta > 0 ? 'delta-up' : (st.delta < 0 ? 'delta-down' : '');
+      add(d, '較上次 ', el('span', cls, (st.delta > 0 ? '+' : '') + st.delta.toFixed(1) + '%'), '(上次 ' + fmtNT(st.prev) + ')');
+      add(card, d);
+    }
+    var acts = el('div', 'acts');
+    var g = gfUrl(x), k = ssUrl(x);
+    if (g) add(acts, extLink(g, 'Google Flights 訂票', 'btn-primary bk-gf'));
+    if (k) add(acts, extLink(k, 'Skyscanner', 'minor bk-ss'));
+    add(acts, copyBtn(x, 'minor bk-copy', '複製'));
+    add(card, acts);
+  }
+  if (st.table.length){
+    add(card, el('button', 'more', selected ? '收起明細 ▴' : '看全部 ' + st.table.length + ' 筆 ▾'));
+  }
+  card.addEventListener('click', function(e){
+    var t = e.target;
+    if (t.closest){
+      if (t.closest('a')) return;
+      var b = t.closest('button'); if (b && b.className.indexOf('more') < 0) return;
+    }
+    toggleCity(c.name, cur);
+  });
+  card.addEventListener('keydown', function(e){
+    if (e.target !== card) return;
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggleCity(c.name, cur); }
+  });
+  return card;
+}
+function cardsSection(sorted){
+  var sec = el('section'); sec.id = 'sec-cards';
+  add(sec, el('h2', null, '各城市最低來回價'));
+  add(sec, el('div', 'sub', '由便宜到貴排;取最新一次掃描、目前篩選下的台幣來回含稅價。「漲」= 比上一次貴超過 ' + D.up_threshold_pct + '%。點卡片看該城市全部報價。'));
+  var cur = currentOpen(sorted);
+  var grid = el('div', 'cards');
+  sorted.forEach(function(st){ add(grid, cityCard(st, st.city.name === cur, cur)); });
   add(sec, grid);
+  var st = null;
+  sorted.forEach(function(s){ if (s.city.name === cur) st = s; });
+  if (st) add(sec, detailPanel(st));
   return sec;
 }
 
+/* ---------- 明細(點城市卡展開) ---------- */
 var COLS = [
-  {k:'rank',    t:'排名',     num:true,  v:function(r){return r.rank_sort;}},
   {k:'origin',  t:'出發機場', num:false, v:function(r){return r.origin + '>' + r.dest;}},
-  {k:'airline', t:'航空公司', num:false, v:function(r){return r.airline;}},
-  {k:'atype',   t:'類型',     num:false, v:function(r){return ATYPE_TEXT[r.atype] || '未分類';}},
+  {k:'airline', t:'航空',     num:false, v:function(r){return r.airline;}},
   {k:'depart',  t:'去程',     num:false, v:function(r){return r.depart || '';}},
   {k:'return',  t:'回程',     num:false, v:function(r){return r['return'] || '';}},
   {k:'nonstop', t:'直飛',     num:true,  v:function(r){return r.nonstop === true ? 0 : (r.nonstop === false ? 1 : 2);}},
   {k:'price',   t:'含稅價',   num:true,  v:function(r){return r.price;}},
-  {k:'source',  t:'來源',     num:false, v:function(r){return r.source;}},
-  {k:'scan',    t:'抓取時間', num:true,  v:function(r){return r.scan_key;}},
-  {k:'act',     t:'訂票／複製', nosort:true}
+  {k:'act',     t:'訂票',     nosort:true}
 ];
 function cellFor(col, r){
   var td = el('td');
   switch (col.k){
-    case 'rank': td.className = 'rank'; td.textContent = r.rank_text; break;
-    case 'origin': td.textContent = r.origin + (r.dest ? ' → ' + r.dest : ''); break;
+    case 'origin': td.textContent = apName(r.origin) + (r.dest ? ' → ' + apName(r.dest) : ''); break;
     case 'airline': td.textContent = r.airline; break;
-    case 'atype': td.textContent = ATYPE_TEXT[r.atype] || '未分類'; break;
     case 'depart': td.textContent = r.depart ? shortDay(r.depart) : '—'; td.title = r.depart_text; break;
-    case 'return': td.textContent = r['return'] ? shortDay(r['return']) : '—'; td.title = r.return_text; break;
+    case 'return':
+      if (r.trip === 'oneway') add(td, el('span', 'tag-ow', '單程'));
+      else { td.textContent = r['return'] ? shortDay(r['return']) : '—'; td.title = r.return_text; }
+      break;
     case 'nonstop': td.textContent = nonstopText(r.nonstop); break;
-    case 'price': td.className = 'num'; td.textContent = r.price_text; break;
-    case 'source': add(td, extLink(r.source_url, r.source)); break;
-    case 'scan': td.textContent = r.scan_text.slice(5); td.title = r.scan_text; break;
+    case 'price': td.className = 'num'; add(td, el('b', null, r.price_text)); break;
     case 'act': add(td, actions(r)); break;
   }
   return td;
@@ -609,6 +808,8 @@ function sortableTable(rows, city){
     }
     list.forEach(function(r){
       var tr = el('tr', r.trip === 'oneway' ? 'ow' : null);
+      tr.title = (r.trip === 'oneway' ? '單程 · ' : '') + '航空類型:' + (ATYPE_TEXT[r.atype] || '未分類') +
+        ' · 來源:' + r.source + ' · 抓取時間:' + r.scan_text;
       COLS.forEach(function(col){ add(tr, cellFor(col, r)); });
       add(tbody, tr);
     });
@@ -621,34 +822,22 @@ function sortableTable(rows, city){
   render();
   return table;
 }
-function tablesSection(states){
-  var sec = el('section'); sec.id = 'sec-tables';
-  add(sec, el('h2', null, '各城市明細(最新一次掃描)'));
-  add(sec, el('div', 'sub', '目前篩選條件下的來回前 3 名 + 單程最低一筆;點欄位標題可排序,再點一次反向。'));
-  var names = states.map(function(st){ return st.city.name; });
-  if (names.indexOf(activeTab) < 0) activeTab = names[0];
-  var tabs = el('div', 'ctabs'), body = el('div');
-  add(sec, tabs, body);
-  function show(){
-    clear(tabs); clear(body);
-    states.forEach(function(st){
-      var c = st.city, b = el('button', 'ctab' + (c.name === activeTab ? ' on' : ''));
-      b.type = 'button';
-      var dot = el('span', 'dot'); dot.style.background = colorVar(c.color);
-      add(b, dot, c.name, el('span', 'cnt', String(st.rt.length + st.ow.length)));
-      b.addEventListener('click', function(){ activeTab = c.name; try { localStorage.setItem(STORE_KEY + '.tab', activeTab); } catch (e) {} show(); });
-      add(tabs, b);
-      if (c.name !== activeTab) return;
-      var blk = el('div', 'tbl-block'), h = el('h3');
-      add(h, c.name + '(' + c.airports + ')', el('span', 'cnt', '符合篩選 ' + st.rt.length + ' 筆來回、' + st.ow.length + ' 筆單程'));
-      add(blk, h, sortableTable(st.table, c.name));
-      add(body, blk);
-    });
-  }
-  show();
-  return sec;
+function detailPanel(st){
+  var c = st.city;
+  var box = el('div', 'detail'); box.id = 'city-detail'; box.setAttribute('data-city', c.name);
+  box.style.borderLeftColor = colorVar(c.color);
+  var h = el('div', 'dhead');
+  add(h, el('h3', null, c.name + ' 全部報價'),
+    el('span', 'cnt', apList(c.airports) + ' · 符合篩選 ' + st.rt.length + ' 筆來回' + (st.ow.length ? '、單程 ' + st.ow.length + ' 筆(表內只列最低一筆)' : '')));
+  var x = el('button', 'pbtn', '收起'); x.type = 'button';
+  x.addEventListener('click', function(){ openCity = ''; renderAll(); });
+  add(h, el('span', 'fspacer'), x);
+  add(box, h, el('div', 'sub2', '點欄位標題可排序,再點一次反向;滑鼠停在列上可看航空類型、來源與抓取時間。'));
+  var sc = el('div', 'tscroll'); add(sc, sortableTable(st.table, c.name)); add(box, sc);
+  return box;
 }
 
+/* ---------- 價格走勢 ---------- */
 function niceStep(range, ticks){
   var raw = range / Math.max(1, ticks);
   var p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
@@ -659,6 +848,12 @@ function pad2(n){ return (n < 10 ? '0' : '') + n; }
 function tpeParts(t){
   var d = new Date(t + 8 * 3600 * 1000);
   return {mo: pad2(d.getUTCMonth() + 1), da: pad2(d.getUTCDate()), h: pad2(d.getUTCHours()), mi: pad2(d.getUTCMinutes())};
+}
+var lastChartW = 0;
+function chartWidth(){
+  var app = document.getElementById('app');
+  var w = (app && app.clientWidth ? app.clientWidth : 1120) - (window.innerWidth <= 640 ? 76 : 120);
+  return Math.max(300, Math.min(1080, Math.round(w)));
 }
 function chartSection(states){
   var sec = el('section'); sec.id = 'sec-chart';
@@ -674,12 +869,14 @@ function chartSection(states){
   var wrap = el('div', 'chart-wrap');
   if (!pts.length) add(wrap, el('div', 'none', '目前篩選條件下沒有台幣來回報價可畫走勢。'));
   else {
-    var W = 1080, H = 340, L = 78, R = 24, T = 16, B = 40;
+    var W = chartWidth(); lastChartW = W;
+    var small = W < 560;
+    var H = small ? 250 : 340, L = small ? 82 : 84, R = small ? 12 : 24, T = 16, B = 40;
     var tMin = Infinity, tMax = -Infinity, pMin = Infinity, pMax = -Infinity;
     pts.forEach(function(p){ tMin = Math.min(tMin, p.t); tMax = Math.max(tMax, p.t); pMin = Math.min(pMin, p.price); pMax = Math.max(pMax, p.price); });
     if (tMax === tMin){ tMin -= 12 * 3600e3; tMax += 12 * 3600e3; }
     var span = pMax - pMin; if (span <= 0) span = Math.max(1000, pMax * 0.2);
-    var step = niceStep(span * 1.2, 5);
+    var step = niceStep(span * 1.2, small ? 4 : 5);
     var yLo = Math.max(0, Math.floor((pMin - span * 0.1) / step) * step);
     var yHi = Math.ceil((pMax + span * 0.1) / step) * step;
     if (yHi === yLo) yHi = yLo + step;
@@ -688,9 +885,9 @@ function chartSection(states){
     var root = svg('svg', {viewBox:'0 0 ' + W + ' ' + H, role:'img', 'aria-label':'各城市最低來回價走勢'});
     for (var v = yLo; v <= yHi + 1e-6; v += step){
       root.appendChild(svg('line', {x1:L, x2:W - R, y1:Y(v), y2:Y(v), 'class':'grid'}));
-      var lab = svg('text', {x:L - 10, y:Y(v) + 4, 'text-anchor':'end', 'class':'axis'}); lab.textContent = fmtNT(v); root.appendChild(lab);
+      var lab = svg('text', {x:L - 8, y:Y(v) + 4, 'text-anchor':'end', 'class':'axis'}); lab.textContent = fmtNT(v); root.appendChild(lab);
     }
-    var multiDay = (tMax - tMin) > 2.5 * 86400e3, nT = 6;
+    var multiDay = (tMax - tMin) > 2.5 * 86400e3, nT = small ? 3 : 6;
     for (var i = 0; i <= nT; i++){
       var tt = tMin + (tMax - tMin) * i / nT, pp = tpeParts(tt);
       var xl = svg('text', {x:X(tt), y:H - 14, 'text-anchor': i === 0 ? 'start' : (i === nT ? 'end' : 'middle'), 'class':'axis'});
@@ -730,20 +927,20 @@ function chartSection(states){
     add(wrap, root, tip);
   }
   add(box, wrap);
-  var how = el('div', 'howto'); add(how, el('b', null, '怎麼看'));
+  add(box, el('div', 'howline', '每個點 = 那一次掃描找到的最低台幣來回含稅價;線往下走 = 變便宜。'));
+  var more = detailsBox('chart-how', false, 'more-how');
+  add(more.s, el('span', 'arr'), '更多說明');
   var ul = el('ul');
   [
-    '每條線是一個城市,每個點是那一次掃描找到的最低台幣來回含稅價。',
-    '線往下走代表變便宜,往上走代表變貴。',
-    '滑鼠移到點上,會顯示那次的掃描時間與價格。',
-    '線會跟著上方的出發機場、城市、航空類型、只看直飛篩選一起重算。',
+    '每條線是一個城市;滑鼠移到點上,會顯示那次的掃描時間與價格。',
+    '線會跟著上方的出發機場、只看直飛,以及進階篩選裡的城市、航空類型一起重算。',
     '航空類型:只勾廉航或只勾傳統時,轉機混搭兩種航空、或認不出類型的報價會先藏起來;兩個都勾才全部顯示。',
     '有設預算上限時,虛線就是預算;落在虛線以下的點才在預算內。',
     '某城市某次沒抓到台幣來回報價就沒有點,線會直接連到下一個點。',
     '非台幣報價不換算,所以不畫進圖裡,只在明細表照原幣列出。',
     '每次的最低價可能落在不同出發日,看趨勢要看連續幾次的方向,不要只看一次跳動。'
   ].forEach(function(t){ add(ul, el('li', null, t)); });
-  add(how, ul); add(box, how); add(sec, box);
+  add(more.d, ul); add(box, more.d); add(sec, box);
   return sec;
 }
 
@@ -761,6 +958,7 @@ function loadRev(){
 }
 var REVDB = null, REV_SYNC = '';
 function saveRev(){
+  UI.rev = true;   // 正在操作日曆,整頁重繪時保持展開
   try { localStorage.setItem(STORE_KEY + '.rev', JSON.stringify(REV)); } catch (e) {}
   if (REVDB){
     REV_SYNC = '儲存中…';
@@ -861,9 +1059,25 @@ function minRow(pred){
 }
 function reverseSection(states){
   if (!REV) REV = loadRev();
+  var d1 = REV.legs[0].depart, r1 = REV.legs[0]['return'], d2 = REV.legs[1].depart, r2 = REV.legs[1]['return'];
+  var full = !!(d1 && r1 && d2 && r2);
   var sec = el('section'); sec.id = 'sec-reverse';
-  add(sec, el('h2', null, '反向票(一年兩段旅程)'));
-  var how = el('div', 'howto'); add(how, el('b', null, '怎麼用'));
+  var x = detailsBox('rev', full, 'secdet');
+  var h2 = el('h2');
+  add(h2, el('span', 'arr'), '兩段旅程省錢試算(反向票)',
+    el('span', 'hint', full ? '第一段 ' + shortDay(d1) + '–' + shortDay(r1) + ' · 第二段 ' + shortDay(d2) + '–' + shortDay(r2)
+                            : '一年要去日本兩次?點開選日期,看拆成兩張票會不會比較便宜'));
+  add(x.s, h2); add(sec, x.d);
+  var body = x.d;
+
+  var steps = el('ol', 'steps');
+  [['1', '選第一段的去程日、回程日(先按「第一段」,再點日曆兩下)'],
+   ['2', '選第二段的去程日、回程日(第一段選完會自動跳過來)'],
+   ['3', '看下面的表:「票A＋票B」和「兩段各買一張來回」哪種便宜']
+  ].forEach(function(s){ var li = el('li'); add(li, el('b', null, s[0]), s[1]); add(steps, li); });
+  add(body, steps);
+  var more = detailsBox('rev-how', false, 'more-how');
+  add(more.s, el('span', 'arr'), '詳細說明');
   var ul0 = el('ul');
   ['在下方日曆選日期:先點「第一段」或「第二段」,再點去程日、回程日;第一段選完會自動跳到第二段。',
    '票 A:台灣出發的來回,第一段去程飛日本、第二段回程才飛回台灣。',
@@ -872,13 +1086,12 @@ function reverseSection(states){
    '價格只有排程掃過這組日期才會出現;沒掃過的格子用按鈕直接開 Google Flights 查。',
    '在 Claude 上開這頁時,選好的日期會存到雲端,下次排程就照這組日期掃;在 GitHub 網址開只會存在這台瀏覽器。'
   ].forEach(function(t){ add(ul0, el('li', null, t)); });
-  add(how, ul0); add(sec, how);
+  add(more.d, ul0); add(body, more.d);
 
-  add(sec, calendarBox());
+  add(body, calendarBox());
 
-  var d1 = REV.legs[0].depart, r1 = REV.legs[0]['return'], d2 = REV.legs[1].depart, r2 = REV.legs[1]['return'];
-  if (!(d1 && r1 && d2 && r2)){ add(sec, el('div', 'none', '四個日期都填好才會算組合。')); return sec; }
-  if (!(d1 < r1 && r1 < d2 && d2 < r2)){ add(sec, el('div', 'err', '日期順序要是:第一段去 < 第一段回 < 第二段去 < 第二段回。')); return sec; }
+  if (!full){ add(body, el('div', 'none', '四個日期都填好才會算組合。')); return sec; }
+  if (!(d1 < r1 && r1 < d2 && d2 < r2)){ add(body, el('div', 'err', '日期順序要是:第一段去 < 第一段回 < 第二段去 < 第二段回。')); return sec; }
 
   var tw = D.origins.filter(function(o){ return originOk(o); });
   var list = [];
@@ -909,7 +1122,7 @@ function reverseSection(states){
   list.forEach(function(x){
     var tr = el('tr'), jp = x.c.code;
     var dot = el('span', 'dot'); dot.style.background = colorVar(x.c.color);
-    var tdc = el('td'); add(tdc, dot, x.c.name); add(tr, tdc, el('td', null, x.o));
+    var tdc = el('td'); add(tdc, dot, x.c.name); add(tr, tdc, el('td', null, apName(x.o)));
     add(tr, cell(x.A, {origin: x.o, dest: jp, city: x.c.name, trip: 'roundtrip', depart: d1, 'return': r2}, '查票 A'));
     add(tr, cell(x.B, {origin: jp, dest: x.o, city: x.c.name, trip: 'roundtrip', depart: r1, 'return': d2}, '查票 B'));
     add(tr, el('td', 'num', x.tot === null ? '—' : fmtNT(x.tot)));
@@ -924,15 +1137,15 @@ function reverseSection(states){
     else sv.textContent = '—';
     add(tr, sv); add(tb, tr);
   });
-  var wrapT = el('div', 'revtbl'); add(wrapT, table); add(sec, wrapT);
+  var wrapT = el('div', 'revtbl'); add(wrapT, table); add(body, wrapT);
   return sec;
 }
+
+/* ---------- 促銷活動(有資料才顯示) ---------- */
 function promosSection(){
-  var sec = el('section'); sec.id = 'sec-promos'; add(sec, el('h2', null, '促銷活動(最新一次掃描)'));
-  var list = D.latest.promos;
-  if (!list.length){ add(sec, el('div', 'none', '本次掃描沒有發現促銷活動。')); return sec; }
+  var sec = el('section'); sec.id = 'sec-promos'; add(sec, el('h2', null, '促銷活動'));
   var grid = el('div', 'promos');
-  list.forEach(function(p){
+  D.latest.promos.forEach(function(p){
     var c = el('div', 'promo'), t = el('div', 't'); add(t, extLink(p.url, p.title)); add(c, t);
     var dl = el('dl');
     [['航空公司', p.airline], ['促銷期間', p.sale_period], ['旅遊期間', p.travel_period]].forEach(function(kv){ add(dl, el('dt', null, kv[0]), el('dd', null, kv[1] || '—')); });
@@ -941,36 +1154,60 @@ function promosSection(){
   add(sec, grid);
   return sec;
 }
-function statusSection(){
-  var sec = el('section'); sec.id = 'sec-status'; add(sec, el('h2', null, '資料狀況(最新一次掃描)'));
+
+/* ---------- 頁尾:資料狀況(收合) ---------- */
+function footerBox(){
+  var f = el('footer');
+  var lt = D.latest;
+  var x = detailsBox('status', false, 'statusdet');
+  var hints = [];
+  if (lt && lt.blocked.length) hints.push('被擋 ' + lt.blocked.length + ' 個來源');
+  if (lt && lt.no_route.length) hints.push('無航線 ' + lt.no_route.length + ' 組');
+  add(x.s, el('span', 'arr'), '資料狀況' + (hints.length ? '(' + hints.join('、') + ')' : '') + ' · 自動重新整理 · 免責聲明');
   var g = el('div', 'status');
-  var p1 = el('div', 'panel'); add(p1, el('h3', null, '被擋的來源'));
-  if (!D.latest.blocked.length) add(p1, el('div', 'none', '本次沒有被擋的來源。'));
-  else { var ul1 = el('ul'); D.latest.blocked.forEach(function(b){ var li = el('li'); add(li, el('b', null, b.source), ':' + b.reason); add(ul1, li); }); add(p1, ul1); }
-  var p2 = el('div', 'panel'); add(p2, el('h3', null, '無航線組合'));
-  if (!D.latest.no_route.length) add(p2, el('div', 'none', '本次沒有回報無航線的組合。'));
-  else { var ul2 = el('ul'); D.latest.no_route.forEach(function(n){ add(ul2, el('li', null, n.origin + ' → ' + n.dest)); }); add(p2, ul2); }
-  add(g, p1, p2); add(sec, g);
-  if (D.skipped > 0) add(sec, el('div', 'sub', '另有 ' + D.skipped + ' 行資料格式不完整,已略過。'));
-  if (!D.latest.has_meta) add(sec, el('div', 'sub', '最新一次掃描在 scans.jsonl 沒有對應的中繼資料。'));
-  return sec;
+  if (lt){
+    var p1 = el('div', 'panel'); add(p1, el('h3', null, '被擋的來源'));
+    if (!lt.blocked.length) add(p1, el('div', 'none', '本次沒有被擋的來源。'));
+    else { var ul1 = el('ul'); lt.blocked.forEach(function(b){ var li = el('li'); add(li, el('b', null, b.source), ':' + b.reason); add(ul1, li); }); add(p1, ul1); }
+    var p2 = el('div', 'panel'); add(p2, el('h3', null, '沒有航線的組合'));
+    if (!lt.no_route.length) add(p2, el('div', 'none', '本次沒有回報無航線的組合。'));
+    else { var ul2 = el('ul'); lt.no_route.forEach(function(n){ add(ul2, el('li', null, apName(n.origin) + ' → ' + apName(n.dest))); }); add(p2, ul2); }
+    add(g, p1, p2);
+    if (lt.note){ var p3 = el('div', 'panel'); add(p3, el('h3', null, '本次掃描備註'), el('div', null, lt.note)); add(g, p3); }
+  }
+  var p4 = el('div', 'panel'); add(p4, el('h3', null, '自動重新整理'));
+  var rl = el('div', 'reload');
+  var cd = el('b', null, ''); cd.id = 'reload-countdown';
+  var rb = el('button', 'pbtn', '立即重新整理'); rb.type = 'button'; rb.id = 'reload-now';
+  rb.addEventListener('click', function(){ location.reload(); });
+  add(rl, '每 ' + D.reload_min + ' 分鐘自動重新整理,倒數', cd, rb);
+  add(p4, rl, el('div', 'none', '頁面產生:' + D.generated_at));
+  add(g, p4);
+  add(x.d, g);
+  if (D.skipped > 0) add(x.d, el('p', null, '另有 ' + D.skipped + ' 行資料格式不完整,已略過。'));
+  if (lt && !lt.has_meta) add(x.d, el('p', null, '最新一次掃描在 scans.jsonl 沒有對應的中繼資料。'));
+  add(x.d, el('p', null, '價格為掃描當下抓到的含稅價,實際以航空公司／訂票網站為準。訂票按鈕會開新分頁帶入機場與日期(1 位成人、台幣)。'));
+  add(f, x.d);
+  return f;
 }
 
 /* ---------- 整頁渲染 ---------- */
 function renderAll(){
   var app = clear(document.getElementById('app'));
   var y = window.scrollY;
-  add(app, header());
-  if (!D.scan_count || !D.latest){
+  var hasData = !!(D.scan_count && D.latest);
+  var states = hasData ? D.cities.filter(function(c){ return cityOk(c.name); }).map(computeCity) : [];
+  add(app, hero(states));
+  if (!hasData){
     add(app, emptyState());
   } else {
-    var states = D.cities.filter(function(c){ return cityOk(c.name); }).map(computeCity);
     var fd = filterDesc(); if (fd) add(app, el('div', 'fnote', fd));
-    if (!states.length) add(app, el('div', 'empty-state', '請在上方至少勾選一個城市。'));
-    else add(app, cardsSection(states), tablesSection(states), reverseSection(states), chartSection(states));
-    add(app, promosSection(), statusSection());
+    if (!states.length) add(app, el('div', 'empty-state', '請打開上方「進階篩選」至少勾選一個城市。'));
+    else add(app, cardsSection(byPrice(states)));
+    if (D.latest.promos.length) add(app, promosSection());
+    if (states.length) add(app, chartSection(states), reverseSection(states));
   }
-  add(app, el('footer', null, '價格為掃描當下抓到的含稅價,實際以航空公司／訂票網站為準。訂票按鈕會開新分頁帶入機場與日期(1 位成人、台幣)。'));
+  add(app, footerBox());
   window.scrollTo(0, y);
 }
 function emptyState(){
@@ -990,6 +1227,11 @@ try {
   renderAll();
   initRevDb();
   startReload();
+  var rzTimer = null;
+  window.addEventListener('resize', function(){
+    if (rzTimer) clearTimeout(rzTimer);
+    rzTimer = setTimeout(function(){ if (lastChartW && Math.abs(chartWidth() - lastChartW) > 40) renderAll(); }, 250);
+  });
   document.body.setAttribute('data-render-status', 'ok');
 } catch (e){
   add(document.getElementById('app'), el('div', 'err', '頁面渲染失敗:' + (e && e.message ? e.message : e)));
